@@ -1,0 +1,90 @@
+remarks Exemple d'analyse de trajectoire de dynamique moleculaire
+remarks Thomas Gaillard, November 2010
+remarks
+
+! Lire le fichier de topologie
+topology @amber.rtf end
+
+! Lire le fichier de parametres
+parameters @amber.prm end
+
+! Lire le fichier de structure
+struct @allh.psf end
+
+! Lire les coordonnees de reference
+coor disp=comp @allh.pdb
+
+! Parametres pour les interactions non-liees
+parameters
+nbonds
+gbhct bato weps=78.5 offset=0.09 lambda=1.0 ! modele de solvatation GB HCT
+end
+end
+
+! Activer tous les termes d'energie
+flags exclude * include bond angl dihe impr vdw elec gbse gbin end
+
+! Fichier ou seront ecrites les mesures effectuees
+set display=md.dat end
+display # index rmsd dist_1_4 sasa_4 epottot inte_1_4
+
+! Initialise la lecture de trajectoire
+read traj ascii=true input=md.dcd begin=500 stop=10000 skip=500 end
+
+! Initialise l'index des coordonnees
+evaluate ($i = 1)
+
+! Boucle de lecture de la trajectoire
+while ($i le 20) loop traj
+
+  ! Calcule le RMSD par rapport a la structure experimentale
+  coor fit end
+  coor rms end
+  evaluate ($rmsd = $result)
+
+  ! Mesure la distance entre deux atomes
+  pick bond (resid 1 and name CA) (resid 4 and name CA) geometry
+  evaluate ($dist_1_4 = $result)
+
+  ! Calcule la surface accessible au solvant totale
+  surf rh2o=1.5 accu=0.01 mode=access sele=(all) end
+
+  ! Calcule la surface accessible au solvant du residu 4
+  vector show sum (rmsd) (resid 4)
+  evaluate ($sasa_4 = $result)
+
+  ! Calcule l'energie totale
+  parameters nbonds gbhct bato weps=78.5 offset=0.09 lambda=1.0 end end
+  cons inte (all) (all) end
+  ener end
+  evaluate ($epottot = $ener)
+
+  ! Calcule l'energie d'interaction entre deux atomes
+  parameters nbonds gbhct bcon weps=78.5 offset=0.09 lambda=1.0 end end
+  cons inte (resid 1 and name CA) (resid 4 and name CA) end
+  ener end
+  evaluate ($inte_1_4 = $ener)
+
+  ! Ecrire les resultats
+  display $i $rmsd $dist_1_4 $sasa_4 $epottot $inte_1_4
+
+  ! Condition de sortie prematuree de la boucle
+  if ($status = "COMPLETE") then exit traj end if
+
+  ! Incremente l'index des coordonnees
+  evaluate ($i = $i + 1)
+
+  ! Avance dans la trajectoire
+  read traj next end
+
+! Fin de la boucle de lecture de la trajectoire
+end loop traj
+
+! Structure moyenne et fluctuations
+dyna anal aver ascii=true input=md.dcd begin=500 stop=10000 skip=500 refer=aver end
+
+! Ecrire les coordonnees
+REMARK MD PDB
+write coor output=md.averfluct.pdb end
+
+stop

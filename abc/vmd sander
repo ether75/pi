@@ -1,0 +1,1 @@
+ $AMBERHOME/bin/sander -O -i min1.in -o min1.out -p TC5b.prmtop-c TC5b.rst7 -r min1.ncrst

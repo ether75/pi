@@ -1,0 +1,136 @@
+TP Trp-cage
+Module bioinformatique structurale
+Master2 ICBM et BIBS
+
+----------------------------------
+Structure et stabilité du Trp-cage
+----------------------------------
+
+L'objectif du TP est d'étudier la structure et la stabilité d'une
+petite protéine, le Trp-cage.
+
+Introduction
+============
+
+Le Trp-cage est une petite protéine artificielle de 20 acides
+aminés, qui a été conçue pour se replier facilement. Sa séquence
+d'acides aminés est NLYIQWLKDGGPSSGRPPPS. Le problème du repliement
+des protéines compte parmi les défis les plus importants de la
+bioinformatique structurale. Il consiste à prédire la structure
+tridimensionnelle d'une protéine à partir uniquement de l'information
+de sa séquence.
+
+Nous emploierons les méthodes de la mécanique moléculaire pour
+modéliser le Trp-cage.
+
+* La dynamique de la protéine repliée à l'équilibre sera d'abord
+étudiée.
+
+* Puis le dépliement du Trp-cage sera étudié en simulant la
+dénaturation de la protéine repliée.
+
+* Enfin la partie la plus difficile du TP consistera, en partant d'une
+conformation dépliée linéaire du Trp-cage, à tenter de replier la
+protéine par le calcul sans aucune information expérimentale.
+
+Protocole
+=========
+
+A) Dynamique à l'équilibre du Trp-cage replié
+---------------------------------------------
+
+1. Examiner les fichiers mis à disposition :
+
+folded.pdb    structure expérimentale (RMN) du Trp-cage replié
+unfolded.pdb  structure dépliée linéaire du Trp-cage
+amber.rtf     fichier de topologie pour XPLOR
+amber.prm     fichier de paramètres pour XPLOR
+build.inp     construction du modèle et minimisation de l'énergie
+md.inp        dynamique moléculaire à 300K
+traj2mpdb.inp conversion de la trajectoire au format PDB multiple
+analyze.inp   analyse de la trajectoire produite
+run.sh        script pour piloter les calculs
+
+2. Construction du modèle
+
+xplor < build.inp > build.out
+
+Ce script construit un modèle du Trp-cage avec XPLOR et effectue une
+minimisation de l'énergie pour améliorer la géométrie.
+
+Examiner le fichier de sortie et visualiser les structures produites.
+
+3. Dynamique moléculaire
+
+xplor < md.inp > md.out
+
+Ce script effectue une dynamique moléculaire du Trp-cage pendant 20ps
+en assignant des vitesses initiales aléatoires puis en maintenant la
+température à 300K.
+
+Examiner le fichier de sortie et suivre l'énergie et la température en
+fonction du temps.
+
+4. Visualisation de la trajectoire
+
+xplor < traj2mpdb.inp > traj2mpdb.out
+
+Ce script convertit le format de la trajectoire produite de DCD à PDB
+multiple.
+
+On pourra ensuite visualiser la trajectoire avec PyMOL en la chargeant
+de la façon suivante :
+
+load md.multi.pdb, multiplex=0
+
+5. Analyse de la trajectoire
+
+xplor < analyze.inp > analyze.out
+
+Ce script lit la trajectoire produite (md.dcd) et
+effectue des calculs structuraux ou énergétiques à chaque pas. Les
+résultats sont écrits dans un fichier texte (md.dat).
+Les représenter graphiquement.
+
+Les analyses incluses dans le script ne le sont qu'à titre d'exemple,
+à vous d'en ajouter d'autres plus pertinentes en vous aidant de la
+documentation d'XPLOR.
+
+* Quels descripteurs de la structure, de la dynamique et de la
+stabilité du Trp-cage avez-vous étudiés ?
+
+* Le temps de simulation est-il suffisant pour obtenir des résultats
+convergés ? Prolonger la simulation si nécessaire.
+
+* La simulation du Trp-cage montre-t-elle une structure stable ?
+
+* Indiquer les déformations éventuelles par rapport à la structure
+expérimentale.
+
+B) Dépliement du Trp-cage
+-------------------------
+
+* Imaginer un protocole pour dénaturer le Trp-cage par dynamique
+moléculaire et l'implémenter en adaptant les scripts XPLOR. Décrire
+la procédure suivie.
+
+* Peut-on définir une limite entre l'état replié et l'état déplié ?
+
+* Observe-t-on différentes étapes dans le dépliement ?
+
+C) Repliement du Trp-cage
+-------------------------
+
+* Adapter les scripts XPLOR et répéter les premières étapes
+du A) pour construire un modèle du Trp-cage déplié (remplacer
+folded par unfolded) et le simuler par dynamique
+moléculaire.
+
+* Mettre au point un protocole pour replier le Trp-cage. Ne pas hésiter
+à s'inspirer de la littérature. Décrire la stratégie suivie.
+
+* Dans quelle mesure avez-vous réussi à replier la protéine ?
+
+* Observe-t-on des états intermédiaires au cours du repliement ?
+
+* Quelles améliorations pourrait-on apporter au modèle ?

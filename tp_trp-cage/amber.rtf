@@ -1,0 +1,5184 @@
+REMARK AMBER parm99SBbsc0 force field residue topology file for XPLOR
+REMARK J. Comput. Chem. (2000) 21, 1049-1074.
+REMARK Proteins (2006) 65, 712-725.
+REMARK Biophys. J. (2007) 92, 3817­3829.
+REMARK converted to XPLOR format by Thomas Gaillard, July 2011
+REMARK contact: thomas.gaillard@polytechnique.edu
+REMARK website: bioc.polytechnique.fr/~gaillard/ff_conversion
+
+! [CONTENT]
+!
+! This is an XPLOR format residue topology file for the AMBER parm99SBbsc0 force
+! field. Use it in combination with parm99SBbsc0.prm.
+!
+! Note that water models other than TIP3 require modifications in parameters.
+!
+! * Masses are converted from AMBER parm99.dat file,
+! with frcmod.parmbsc0 modifications.
+!
+! * Residue topology and charges are converted from AMBER libraries
+! all_nucleic94.lib with DNA and RNA C5' atom CT to CI type modification,
+! all_amino94.lib, all_aminont94.lib, all_aminoct94.lib,
+! ions94.lib, and solvents.lib.
+!
+! * Hydrogen bonds donor and acceptor lists, and internal coordinates
+! tables are adapted from CHARMM all27 residue topology file.
+!
+! * AMBER atom names are preserved.
+!
+! * AMBER atom types are preserved except:
+!
+! type Na renamed to Sd
+! type Cs renamed to Es
+!
+! [COMMENTS]
+!
+! * The electrostatic conversion factor (CCELEC) in XPLOR
+! (source/consta.fcm) has to be modified to match AMBER energies:
+!
+! XPLOR original value: CCELEC=332.0636D0
+! AMBER value:          CCELEC=332.0522173D0
+!
+! * The degree to radian conversion factor (DEGTORAD) in LEAP
+! (AmberTools/src/leap/src/leap/basics.h) has insufficient precision.
+! Precision has to be increased to improve agreement of angular energy
+! terms between XPLOR and AMBER:
+!
+! original value: #define DEGTORAD        0.0174533
+! better precision: #define DEGTORAD        0.0174532925199432957692369076848
+!
+! * XPLOR residue topology file particularities:
+!
+! - Dihedral multiplicities are explicitly defined in XPLOR residue
+! or patch topologies. As a consequence, RTF and PRM files are not
+! independent in XPLOR and it is not advisable to use different
+! combinations of RTF and PRM than those recommended.
+!
+! - Linking between residues is done explicitly in XPLOR through special
+! link patches.
+!
+! [RELIABILITY]
+!
+! The conversion was checked by comparing energies, forces, and topologies
+! between AMBER and XPLOR for different systems.
+!
+! For amino acids, all possible dipeptide combinations (AA1-AA2, NAA1-AA2,
+! AA1-CAA2, and NAA1-CAA2) were tested, where AA1 and AA2 span the amino
+! acid residues (ALA ARG ASH ASN ASP CYM CYS CYX GLH GLN GLU GLY HID
+! HIE HIP ILE LEU LYN LYS MET PHE PRO SER THR TRP TYR VAL), as well as
+! combinations with neutral terminal residues (ACE-AA1, ACE-CAA1, AA1-NHE,
+! NAA1-NHE, AA1-NME, NAA1-NME), and isolated residues (AA1, NAA1, CAA1).
+!
+! For nucleotides, all combinations of DNA and RNA dinucleotides (N1-N2,
+! 5'N1-N2, N1-3'N2, 5'N1-3'N2) were tested, where N1 and N2 span the
+! nucleotide residues (A C G T/U), as well as isolated nucleotides (N1,
+! 5'N1, 3'N1, 5'3'N1).
+!
+! All possible linkages have thus been tested. No cutoff was employed for
+! nonbonded interactions. Agreement between XPLOR and AMBER energies was
+! of the order of 10^-6 kcal/mol and 10^-6 kcal/mol/AA for forces in all
+! cases, and topologies described by XPLOR psf and AMBER prmtop files were
+! identical.
+!
+! [BUILDING DNA or RNA]
+!
+! Residue names of $pdbfile have to be adequately edited.
+! change ADE, CYT, GUA, THY, URA to
+! DA, DC, DG, DT for DNA or RA, RC, RG, RU for RNA
+!
+! Patches for 5'- and 3'-terminal extremities
+! have to be defined in $ter5 and $ter3 variables.
+! (ter5=DN5 and ter3=DN3 for DNA, ter5=RN5 and ter3=RN3 for RNA)
+!
+! segment
+!   chain
+!     first $ter5 tail + * end        ! 5'-terminal patch
+!     last $ter3 head - * end         ! 3'-terminal patch
+!     link NUCL head - * tail + * end ! generic nucleic acid link
+!     coor @$pdbfile
+!   end
+! end
+!
+! [BUILDING PEPTIDES]
+!
+! Residue names of $pdbfile have to be adequately edited.
+! change HIS to chosen protonation state HIE, HID, or HIP
+!
+! Patches for N- and C-terminal extremities
+! have to be defined in $nter and $cter variables.
+! (for example nter=NALA and cter=CVAL)
+!
+! segment
+!   chain
+!     first $nter tail + * end            ! N-terminal patch
+!     last $cter head - * end             ! C-terminal patch
+!     link ACEG head - ACE tail + GLY end ! peptide ACE-GLY link
+!     link ACEP head - ACE tail + PRO end ! peptide ACE-PRO link
+!     link ACEA head - ACE tail + *   end ! peptide ACE-AA link
+!     link NHEG head - GLY tail + NHE end ! peptide GLY-NHE link
+!     link NHEA head - *   tail + NHE end ! peptide AA-NHE link
+!     link NMEG head - GLY tail + NME end ! peptide GLY-NME link
+!     link NMEA head - *   tail + NME end ! peptide AA-NME link
+!     link PPGG head - GLY tail + GLY end ! peptide GLY-GLY link
+!     link PPGP head - GLY tail + PRO end ! peptide GLY-PRO link
+!     link PPG1 head - *   tail + GLY end ! peptide AA-GLY link
+!     link PPG2 head - GLY tail + *   end ! peptide GLY-AA link
+!     link PEPP head - *   tail + PRO end ! peptide AA-PRO link
+!     link PEPT head - *   tail + *   end ! generic peptide AA-AA link
+!     coor @$pdbfile
+!   end
+! end
+! ! special patch to be applied afterwards for a NTER_AA-AA link
+! ! (make sure that it corresponds to resid 1 and 2)
+! patch PSTN refe="-"=(resid 1) refe="+"=(resid 2) end
+!
+SET ECHO=FALSE END
+
+AUTOGEN ANGL=TRUE DIHE=TRUE END
+
+!--------
+! Masses
+!--------
+
+MASS C    12.01 ! sp2 C carbonyl group 
+MASS CA   12.01 ! sp2 C pure aromatic (benzene)
+MASS CB   12.01 ! sp2 aromatic C, 5&6 membered ring junction
+MASS CC   12.01 ! sp2 aromatic C, 5 memb. ring HIS
+MASS CD   12.01 ! sp2 C atom in the middle of: C=CD-CD=C
+MASS CK   12.01 ! sp2 C 5 memb.ring in purines
+MASS CM   12.01 ! sp2 C  pyrimidines in pos. 5 & 6
+MASS CN   12.01 ! sp2 C aromatic 5&6 memb.ring junct.(TRP)
+MASS CQ   12.01 ! sp2 C in 5 mem.ring of purines between 2 N
+MASS CR   12.01 ! sp2 arom as CQ but in HIS
+MASS CT   12.01 ! sp3 aliphatic C
+MASS CV   12.01 ! sp2 arom. 5 memb.ring w/1 N and 1 H (HIS)
+MASS CW   12.01 ! sp2 arom. 5 memb.ring w/1 N-H and 1 H (HIS)
+MASS C*   12.01 ! sp2 arom. 5 memb.ring w/1 subst. (TRP)
+MASS CY   12.01 ! nitrile C (Howard et al.JCC,16,243,1995)
+MASS CZ   12.01 ! sp C (Howard et al.JCC,16,243,1995)
+MASS CI   12.01 ! parmbsc0
+MASS C0   40.08 ! calcium
+MASS H    1.008 ! H bonded to nitrogen atoms
+MASS HC   1.008 ! H aliph. bond. to C without electrwd.group
+MASS H1   1.008 ! H aliph. bond. to C with 1 electrwd. group
+MASS H2   1.008 ! H aliph. bond. to C with 2 electrwd.groups
+MASS H3   1.008 ! H aliph. bond. to C with 3 eletrwd.groups
+MASS HA   1.008 ! H arom. bond. to C without elctrwd. groups
+MASS H4   1.008 ! H arom. bond. to C with 1 electrwd. group
+MASS H5   1.008 ! H arom.at C with 2 elctrwd. gr,+HCOO group
+MASS HO   1.008 ! hydroxyl group
+MASS HS   1.008 ! hydrogen bonded to sulphur (pol?)
+MASS HW   1.008 ! H in TIP3P water
+MASS HP   1.008 ! H bonded to C next to positively charged gr
+MASS HZ   1.008 ! H bond sp C (Howard et al.JCC,16,243,1995)
+MASS F    19.00 ! fluorine
+MASS Cl   35.45 ! chlorine  (Applequist)
+MASS Br   79.90 ! bromine  (Applequist)
+MASS I    126.9 ! iodine   (Applequist)
+MASS IM   35.45 ! assumed to be Cl- (ion minus)
+MASS IB   131.0 ! 'big ion w/ waters' for vacuum (Na+, 6H2O)
+MASS MG   24.305 ! magnesium
+MASS N    14.01 ! sp2 nitrogen in amide groups
+MASS NA   14.01 ! sp2 N in 5 memb.ring w/H atom (HIS)
+MASS NB   14.01 ! sp2 N in 5 memb.ring w/LP (HIS,ADE,GUA)
+MASS NC   14.01 ! sp2 N in 6 memb.ring w/LP (ADE,GUA)
+MASS N2   14.01 ! sp2 N in amino groups
+MASS N3   14.01 ! sp3 N for charged amino groups (Lys, etc)
+MASS NT   14.01 ! sp3 N for amino groups amino groups 
+MASS N*   14.01 ! sp2 N 
+MASS NY   14.01 ! nitrile N (Howard et al.JCC,16,243,1995)
+MASS O    16.00 ! carbonyl group oxygen
+MASS O2   16.00 ! carboxyl and phosphate group oxygen
+MASS OW   16.00 ! oxygen in TIP3P water
+MASS OH   16.00 ! oxygen in hydroxyl group
+MASS OS   16.00 ! ether and ester oxygen
+MASS P    30.97 ! phosphate,pol:JACS,112,8543,90,K.J.Miller
+MASS S    32.06 ! S in disulfide linkage,pol:JPC,102,2399,98
+MASS SH   32.06 ! S in cystine
+MASS CU   63.55 ! copper
+MASS FE   55.00 ! iron
+MASS Li   6.94 ! lithium, ions pol:J.PhysC,11,1541,(1978)
+MASS IP   22.99 ! assumed to be Na+ (ion plus)
+MASS Sd   22.99 ! Na+, ions pol:J.PhysC,11,1541,(1978)
+MASS K    39.10 ! potassium
+MASS Rb   85.47 ! rubidium
+MASS Es   132.91 ! cesium
+MASS Zn   65.4 ! Zn2+ 
+MASS LP   3.00 ! lone pair
+
+!-------------
+! Nucleotides
+!-------------
+
+RESI DA ! D-ADENOSINE
+GROUP
+ATOM P    TYPE=P    CHARGE= 1.165900 END !         H61  H62
+ATOM O1P  TYPE=O2   CHARGE=-0.776100 END !           \  /
+ATOM O2P  TYPE=O2   CHARGE=-0.776100 END !            N6
+ATOM O5'  TYPE=OS   CHARGE=-0.495400 END !            |
+ATOM C5'  TYPE=CI   CHARGE=-0.006900 END !            C6
+ATOM H5'1 TYPE=H1   CHARGE= 0.075400 END !          //  \
+ATOM H5'2 TYPE=H1   CHARGE= 0.075400 END !          N1   C5--N7\\
+ATOM C4'  TYPE=CT   CHARGE= 0.162900 END !          |    ||     C8-H8
+ATOM H4'  TYPE=H1   CHARGE= 0.117600 END !          C2   C4--N9/
+ATOM O4'  TYPE=OS   CHARGE=-0.369100 END !         / \\ /     \
+ATOM C1'  TYPE=CT   CHARGE= 0.043100 END !       H2   N3       \
+ATOM H1'  TYPE=H2   CHARGE= 0.183800 END !                      \
+ATOM N9   TYPE=N*   CHARGE=-0.026800 END !                       \
+ATOM C8   TYPE=CK   CHARGE= 0.160700 END !                        \
+ATOM H8   TYPE=H5   CHARGE= 0.187700 END !    O1P   H5'1 H4'  O4'  \
+ATOM N7   TYPE=NB   CHARGE=-0.617500 END !     |      |    \ /   \  \
+ATOM C5   TYPE=CB   CHARGE= 0.072500 END !    -P-O5'-C5'---C4'    C1'
+ATOM C6   TYPE=CA   CHARGE= 0.689700 END !     |      |     \     / \
+ATOM N6   TYPE=N2   CHARGE=-0.912300 END !    O2P   H5'2    C3'--C2' H1'
+ATOM H61  TYPE=H    CHARGE= 0.416700 END !                 /  \  /  \
+ATOM H62  TYPE=H    CHARGE= 0.416700 END !              O3' H3' H2'2 H2'1
+ATOM N1   TYPE=NC   CHARGE=-0.762400 END !               |
+ATOM C2   TYPE=CQ   CHARGE= 0.571600 END
+ATOM H2   TYPE=H5   CHARGE= 0.059800 END
+ATOM N3   TYPE=NC   CHARGE=-0.741700 END
+ATOM C4   TYPE=CB   CHARGE= 0.380000 END
+ATOM C3'  TYPE=CT   CHARGE= 0.071300 END
+ATOM H3'  TYPE=H1   CHARGE= 0.098500 END
+ATOM C2'  TYPE=CT   CHARGE=-0.085400 END
+ATOM H2'1 TYPE=HC   CHARGE= 0.071800 END
+ATOM H2'2 TYPE=HC   CHARGE= 0.071800 END
+ATOM O3'  TYPE=OS   CHARGE=-0.523200 END
+BOND P    O1P 
+BOND P    O2P 
+BOND P    O5' 
+BOND O5'  C5' 
+BOND C5'  H5'1
+BOND C5'  H5'2
+BOND C5'  C4' 
+BOND C4'  H4' 
+BOND C4'  O4' 
+BOND C4'  C3' 
+BOND O4'  C1' 
+BOND C1'  H1' 
+BOND C1'  N9  
+BOND C1'  C2' 
+BOND N9   C8  
+BOND N9   C4  
+BOND C8   H8  
+BOND C8   N7  
+BOND N7   C5  
+BOND C5   C6  
+BOND C5   C4  
+BOND C6   N6  
+BOND C6   N1  
+BOND N6   H61 
+BOND N6   H62 
+BOND N1   C2  
+BOND C2   H2  
+BOND C2   N3  
+BOND N3   C4  
+BOND C3'  H3' 
+BOND C3'  C2' 
+BOND C3'  O3' 
+BOND C2'  H2'1
+BOND C2'  H2'2
+DIHE C3'  C4'  C5'  O5'  MULT 3
+DIHE C1'  O4'  C4'  C5'  MULT 2
+DIHE C1'  O4'  C4'  C3'  MULT 2
+DIHE C2'  C3'  C4'  C5'  MULT 3
+DIHE O3'  C3'  C4'  H4'  MULT 2
+DIHE H3'  C3'  C4'  O4'  MULT 2
+DIHE O3'  C3'  C4'  O4'  MULT 2
+DIHE N9   C1'  O4'  C4'  MULT 2
+DIHE C2'  C1'  O4'  C4'  MULT 2
+DIHE C8   N9   C1'  O4'  MULT 2
+DIHE H2'1 C2'  C1'  O4'  MULT 2
+DIHE H2'2 C2'  C1'  O4'  MULT 2
+DIHE C1'  C2'  C3'  C4'  MULT 3
+DIHE H2'1 C2'  C3'  O3'  MULT 2
+DIHE H2'2 C2'  C3'  O3'  MULT 2
+IMPR C4   C8   N9   C1' 
+IMPR N9   N7   C8   H8  
+IMPR C5   N6   C6   N1  
+IMPR C6   H61  N6   H62 
+IMPR N1   N3   C2   H2  
+DONO H61  N6  
+DONO H62  N6  
+ACCE N3   NONE
+ACCE N7   NONE
+ACCE N1   NONE
+ACCE O1P  P   
+ACCE O2P  P   
+ACCE O3'  NONE
+ACCE O4'  NONE
+ACCE O5'  NONE
+IC P    O5'  C5'  C4'  1.5996 119.00 -146.00 110.04 1.5160
+IC O5'  C5'  C4'  C3'  1.4401 108.83 60.00 116.10 1.5284
+IC C5'  C4'  C3'  O3'  1.5160 116.10 140.00 115.12 1.4212
+IC O4'  C3'  *C4' C5'  1.4572 104.06 -120.04 116.10 1.5160
+IC C2'  C4'  *C3' O3'  1.5284 100.16 -124.08 115.12 1.4212
+IC C4'  C3'  C2'  C1'  1.5284 100.16 -30.00 102.04 1.5251
+IC C3'  C2'  C1'  N9   1.5284 101.97 147.80 113.71 1.4896
+IC O4'  C1'  N9   C4   1.5251 113.71 -97.2 125.59 1.3783
+IC C1'  C4   *N9  C8   1.4896 125.97 -179.94 106.0 1.367
+IC C4   N9   C8   N7   1.376 106.0 0.0 113.6 1.312
+IC C8   N9   C4   C5   1.367 106.0 0.0 105.6 1.382
+IC C8   N7   C5   C6   0.0 0.0 180.0 0.0 0.0
+IC N7   C5   C6   N1   0.0 0.0 180.0 0.0 0.0
+IC C5   C6   N1   C2   0.0 0.0 0.0 0.0 0.0
+IC N9   C5   *C4  N3   1.376 105.6 -180.0 126.9 1.342
+IC C5   N1   *C6  N6   1.409 117.6 -180.0 121.2 1.337
+IC N1   C6   N6   H61  1.337 121.2 0.0 119.0 1.01
+IC H61  C6   *N6  H62  1.01 119.0 180.0 119.00 1.01
+IC C5   N1   *C6  N6   1.409 117.6 -180.0 119.0 1.337
+IC N1   C6   N6   H61  1.337 119.0 0.0 119.0 1.01
+IC H61  C6   *N6  H62  1.01 119.0 180.0 121.00 1.01
+IC N9   N7   *C8  H8   0.0 0.0 180.0 0.0 0.0
+IC N1   N3   *C2  H2   0.0 0.0 180.0 0.0 0.0
+IC O4'  C2'  *C1' H1'  0.0 0.0 -115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'1 0.0 0.0 115.0 0.0 0.0
+IC C2'  C4'  *C3' H3'  0.0 0.0 115.0 0.0 0.0
+IC C3'  O4'  *C4' H4'  0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'1 0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'2 0.0 0.0 115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'2 0.0 0.0 -115.0 0.0 0.0
+END
+
+RESI DC ! D-CYTOSINE
+GROUP
+ATOM P    TYPE=P    CHARGE= 1.165900 END !                  H42  H41
+ATOM O1P  TYPE=O2   CHARGE=-0.776100 END !                    \  /
+ATOM O2P  TYPE=O2   CHARGE=-0.776100 END !                     N4
+ATOM O5'  TYPE=OS   CHARGE=-0.495400 END !                     |
+ATOM C5'  TYPE=CI   CHARGE=-0.006900 END !                     C4
+ATOM H5'1 TYPE=H1   CHARGE= 0.075400 END !                    /  \\
+ATOM H5'2 TYPE=H1   CHARGE= 0.075400 END !                H5-C5   N3
+ATOM C4'  TYPE=CT   CHARGE= 0.162900 END !                   ||   |
+ATOM H4'  TYPE=H1   CHARGE= 0.117600 END !                H6-C6   C2
+ATOM O4'  TYPE=OS   CHARGE=-0.369100 END !                    \  / \\
+ATOM C1'  TYPE=CT   CHARGE=-0.011600 END !                     N1   O2
+ATOM H1'  TYPE=H2   CHARGE= 0.196300 END !                      \
+ATOM N1   TYPE=N*   CHARGE=-0.033900 END !                       \
+ATOM C6   TYPE=CM   CHARGE=-0.018300 END !                        \
+ATOM H6   TYPE=H4   CHARGE= 0.229300 END !    O1P   H5'1 H4'  O4'  \
+ATOM C5   TYPE=CM   CHARGE=-0.522200 END !     |      |    \ /   \  \
+ATOM H5   TYPE=HA   CHARGE= 0.186300 END !    -P-O5'-C5'---C4'    C1'
+ATOM C4   TYPE=CA   CHARGE= 0.843900 END !     |      |     \     / \
+ATOM N4   TYPE=N2   CHARGE=-0.977300 END !    O2P   H5'2    C3'--C2' H1'
+ATOM H41  TYPE=H    CHARGE= 0.431400 END !                 /  \  /  \
+ATOM H42  TYPE=H    CHARGE= 0.431400 END !              O3' H3' H2'2 H2'1
+ATOM N3   TYPE=NC   CHARGE=-0.774800 END !               |
+ATOM C2   TYPE=C    CHARGE= 0.795900 END
+ATOM O2   TYPE=O    CHARGE=-0.654800 END
+ATOM C3'  TYPE=CT   CHARGE= 0.071300 END
+ATOM H3'  TYPE=H1   CHARGE= 0.098500 END
+ATOM C2'  TYPE=CT   CHARGE=-0.085400 END
+ATOM H2'1 TYPE=HC   CHARGE= 0.071800 END
+ATOM H2'2 TYPE=HC   CHARGE= 0.071800 END
+ATOM O3'  TYPE=OS   CHARGE=-0.523200 END
+BOND P    O1P 
+BOND P    O2P 
+BOND P    O5' 
+BOND O5'  C5' 
+BOND C5'  H5'1
+BOND C5'  H5'2
+BOND C5'  C4' 
+BOND C4'  H4' 
+BOND C4'  O4' 
+BOND C4'  C3' 
+BOND O4'  C1' 
+BOND C1'  H1' 
+BOND C1'  N1  
+BOND C1'  C2' 
+BOND N1   C6  
+BOND N1   C2  
+BOND C6   H6  
+BOND C6   C5  
+BOND C5   H5  
+BOND C5   C4  
+BOND C4   N4  
+BOND C4   N3  
+BOND N4   H41 
+BOND N4   H42 
+BOND N3   C2  
+BOND C2   O2  
+BOND C3'  H3' 
+BOND C3'  C2' 
+BOND C3'  O3' 
+BOND C2'  H2'1
+BOND C2'  H2'2
+DIHE C3'  C4'  C5'  O5'  MULT 3
+DIHE C1'  O4'  C4'  C5'  MULT 2
+DIHE C1'  O4'  C4'  C3'  MULT 2
+DIHE C2'  C3'  C4'  C5'  MULT 3
+DIHE O3'  C3'  C4'  H4'  MULT 2
+DIHE H3'  C3'  C4'  O4'  MULT 2
+DIHE O3'  C3'  C4'  O4'  MULT 2
+DIHE N1   C1'  O4'  C4'  MULT 2
+DIHE C2'  C1'  O4'  C4'  MULT 2
+DIHE C6   N1   C1'  O4'  MULT 2
+DIHE H2'1 C2'  C1'  O4'  MULT 2
+DIHE H2'2 C2'  C1'  O4'  MULT 2
+DIHE C1'  C2'  C3'  C4'  MULT 3
+DIHE H2'1 C2'  C3'  O3'  MULT 2
+DIHE H2'2 C2'  C3'  O3'  MULT 2
+IMPR C2   C6   N1   C1' 
+IMPR N1   C5   C6   H6  
+IMPR N1   N3   C2   O2  
+IMPR C6   C4   C5   H5  
+IMPR C5   N4   C4   N3  
+IMPR C4   H41  N4   H42 
+DONO H42  N4  
+DONO H41  N4  
+ACCE O2   C2  
+ACCE N3   NONE
+ACCE O1P  P   
+ACCE O2P  P   
+ACCE O3'  NONE
+ACCE O4'  NONE
+ACCE O5'  NONE
+IC P    O5'  C5'  C4'  1.5996 119.00 -146.00 110.04 1.5160
+IC O5'  C5'  C4'  C3'  1.4401 108.83 60.00 116.10 1.5284
+IC C5'  C4'  C3'  O3'  1.5160 116.10 140.00 115.12 1.4212
+IC O4'  C3'  *C4' C5'  1.4572 104.06 -120.04 116.10 1.5160
+IC C2'  C4'  *C3' O3'  1.5284 100.16 -124.08 115.12 1.4212
+IC C4'  C3'  C2'  C1'  1.5284 100.16 -30.00 102.04 1.5251
+IC C3'  C2'  C1'  N1   1.5284 101.97 147.89 113.71 1.4896
+IC O4'  C1'  N1   C2   1.5251 113.71 -97.2 125.59 1.3783
+IC C1'  C2   *N1  C6   1.4896 117.79 -180.00 120.6 1.364
+IC C2   N1   C6   C5   1.399 120.6 0.0 121.0 1.337
+IC C6   N1   C2   N3   1.364 120.6 0.0 118.9 1.356
+IC N1   N3   *C2  O2   1.399 118.9 180.0 121.9 1.237
+IC N1   C2   N3   C4   1.399 118.9 0.0 120.0 1.334
+IC C5   N3   *C4  N4   1.426 121.8 180.00 118.9 1.337
+IC N3   C4   N4   H41  1.337 117.9 0.00 118.9 1.01
+IC H41  C4   *N4  H42  1.01 118.9 180.00 120.7 1.01
+IC C6   C4   *C5  H5   0.0 0.0 180.0 0.0 0.0
+IC N1   C5   *C6  H6   0.0 0.0 180.0 0.0 0.0
+IC O4'  C2'  *C1' H1'  0.0 0.0 -115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'1 0.0 0.0 115.0 0.0 0.0
+IC C2'  C4'  *C3' H3'  0.0 0.0 115.0 0.0 0.0
+IC C3'  O4'  *C4' H4'  0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'1 0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'2 0.0 0.0 115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'2 0.0 0.0 -115.0 0.0 0.0
+END
+
+RESI DG ! D-GUANOSINE
+GROUP
+ATOM P    TYPE=P    CHARGE= 1.165900 END !           O6
+ATOM O1P  TYPE=O2   CHARGE=-0.776100 END !           ||
+ATOM O2P  TYPE=O2   CHARGE=-0.776100 END !           C6
+ATOM O5'  TYPE=OS   CHARGE=-0.495400 END !          /  \
+ATOM C5'  TYPE=CI   CHARGE=-0.006900 END !      H1-N1   C5--N7\\
+ATOM H5'1 TYPE=H1   CHARGE= 0.075400 END !         |    ||     C8-H8
+ATOM H5'2 TYPE=H1   CHARGE= 0.075400 END !         C2   C4--N9/
+ATOM C4'  TYPE=CT   CHARGE= 0.162900 END !        / \\ /      \
+ATOM H4'  TYPE=H1   CHARGE= 0.117600 END !  H21-N2   N3        \
+ATOM O4'  TYPE=OS   CHARGE=-0.369100 END !      |               \
+ATOM C1'  TYPE=CT   CHARGE= 0.035800 END !     H22               \
+ATOM H1'  TYPE=H2   CHARGE= 0.174600 END !                        \
+ATOM N9   TYPE=N*   CHARGE= 0.057700 END !    O1P   H5'1 H4'  O4'  \
+ATOM C8   TYPE=CK   CHARGE= 0.073600 END !     |      |    \ /   \  \
+ATOM H8   TYPE=H5   CHARGE= 0.199700 END !    -P-O5'-C5'---C4'    C1'
+ATOM N7   TYPE=NB   CHARGE=-0.572500 END !     |      |     \     / \
+ATOM C5   TYPE=CB   CHARGE= 0.199100 END !    O2P   H5'2    C3'--C2' H1'
+ATOM C6   TYPE=C    CHARGE= 0.491800 END !                 /  \  /  \
+ATOM O6   TYPE=O    CHARGE=-0.569900 END !              O3' H3' H2'2 H2'1
+ATOM N1   TYPE=NA   CHARGE=-0.505300 END !               |
+ATOM H1   TYPE=H    CHARGE= 0.352000 END
+ATOM C2   TYPE=CA   CHARGE= 0.743200 END
+ATOM N2   TYPE=N2   CHARGE=-0.923000 END
+ATOM H21  TYPE=H    CHARGE= 0.423500 END
+ATOM H22  TYPE=H    CHARGE= 0.423500 END
+ATOM N3   TYPE=NC   CHARGE=-0.663600 END
+ATOM C4   TYPE=CB   CHARGE= 0.181400 END
+ATOM C3'  TYPE=CT   CHARGE= 0.071300 END
+ATOM H3'  TYPE=H1   CHARGE= 0.098500 END
+ATOM C2'  TYPE=CT   CHARGE=-0.085400 END
+ATOM H2'1 TYPE=HC   CHARGE= 0.071800 END
+ATOM H2'2 TYPE=HC   CHARGE= 0.071800 END
+ATOM O3'  TYPE=OS   CHARGE=-0.523200 END
+BOND P    O1P 
+BOND P    O2P 
+BOND P    O5' 
+BOND O5'  C5' 
+BOND C5'  H5'1
+BOND C5'  H5'2
+BOND C5'  C4' 
+BOND C4'  H4' 
+BOND C4'  O4' 
+BOND C4'  C3' 
+BOND O4'  C1' 
+BOND C1'  H1' 
+BOND C1'  N9  
+BOND C1'  C2' 
+BOND N9   C8  
+BOND N9   C4  
+BOND C8   H8  
+BOND C8   N7  
+BOND N7   C5  
+BOND C5   C6  
+BOND C5   C4  
+BOND C6   O6  
+BOND C6   N1  
+BOND N1   H1  
+BOND N1   C2  
+BOND C2   N2  
+BOND C2   N3  
+BOND N2   H21 
+BOND N2   H22 
+BOND N3   C4  
+BOND C3'  H3' 
+BOND C3'  C2' 
+BOND C3'  O3' 
+BOND C2'  H2'1
+BOND C2'  H2'2
+DIHE C3'  C4'  C5'  O5'  MULT 3
+DIHE C1'  O4'  C4'  C5'  MULT 2
+DIHE C1'  O4'  C4'  C3'  MULT 2
+DIHE C2'  C3'  C4'  C5'  MULT 3
+DIHE O3'  C3'  C4'  H4'  MULT 2
+DIHE H3'  C3'  C4'  O4'  MULT 2
+DIHE O3'  C3'  C4'  O4'  MULT 2
+DIHE N9   C1'  O4'  C4'  MULT 2
+DIHE C2'  C1'  O4'  C4'  MULT 2
+DIHE C8   N9   C1'  O4'  MULT 2
+DIHE H2'1 C2'  C1'  O4'  MULT 2
+DIHE H2'2 C2'  C1'  O4'  MULT 2
+DIHE C1'  C2'  C3'  C4'  MULT 3
+DIHE H2'1 C2'  C3'  O3'  MULT 2
+DIHE H2'2 C2'  C3'  O3'  MULT 2
+IMPR C4   C8   N9   C1' 
+IMPR N9   N7   C8   H8  
+IMPR C5   N1   C6   O6  
+IMPR C6   C2   N1   H1  
+IMPR N2   N1   C2   N3  
+IMPR C2   H21  N2   H22 
+DONO H21  N2  
+DONO H22  N2  
+DONO H1   N1  
+ACCE O6   C6  
+ACCE N3   NONE
+ACCE N7   NONE
+ACCE O1P  P   
+ACCE O2P  P   
+ACCE O3'  NONE
+ACCE O4'  NONE
+ACCE O5'  NONE
+IC P    O5'  C5'  C4'  1.5996 119.00 -146.00 110.04 1.5160
+IC O5'  C5'  C4'  C3'  1.4401 108.83 60.00 116.10 1.5284
+IC C5'  C4'  C3'  O3'  1.5160 116.10 140.00 115.12 1.4212
+IC O4'  C3'  *C4' C5'  1.4572 104.06 -120.04 116.10 1.5160
+IC C2'  C4'  *C3' O3'  1.5284 100.16 -124.08 115.12 1.4212
+IC C4'  C3'  C2'  C1'  1.5284 100.16 -30.00 102.04 1.5251
+IC C3'  C2'  C1'  N9   1.5284 101.97 147.80 113.71 1.4896
+IC O4'  C1'  N9   C4   1.5251 113.71 -97.2 125.59 1.3783
+IC C1'  C4   *N9  C8   1.4896 125.59 -179.99 106.0 1.374
+IC C4   N9   C8   N7   1.377 106.0 0.0 113.5 1.304
+IC C8   N9   C4   C5   1.374 106.0 0.0 105.6 1.377
+IC N9   C5   *C4  N3   1.377 105.6 180.0 128.4 1.355
+IC C5   C4   N3   C2   1.377 128.4 0.0 111.8 1.327
+IC C4   N3   C2   N1   1.355 111.8 0.0 124.0 1.375
+IC N1   N3   *C2  N2   1.375 124.0 180.0 119.7 1.341
+IC N3   C2   N2   H21  1.327 119.7 180.0 127.0 1.01
+IC H21  C2   *N2  H22  1.01 127.0 -180.0 116.5 1.01
+IC N3   C2   N1   C6   1.327 124.0 0.0 124.9 1.393
+IC C6   C2   *N1  H1   1.393 124.9 180.0 117.4 1.03
+IC C5   N1   *C6  O6   1.415 111.7 180.0 120.0 1.239
+IC N9   N7   *C8  H8   0.0 0.0 180.0 0.0 0.0
+IC O4'  C2'  *C1' H1'  0.0 0.0 -115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'1 0.0 0.0 115.0 0.0 0.0
+IC C2'  C4'  *C3' H3'  0.0 0.0 115.0 0.0 0.0
+IC C3'  O4'  *C4' H4'  0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'1 0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'2 0.0 0.0 115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'2 0.0 0.0 -115.0 0.0 0.0
+END
+
+RESI DT ! D-THYMINE
+GROUP
+ATOM P    TYPE=P    CHARGE= 1.165900 END !               H71   O4
+ATOM O1P  TYPE=O2   CHARGE=-0.776100 END !                |    ||
+ATOM O2P  TYPE=O2   CHARGE=-0.776100 END !            H72-C7   C4    H3
+ATOM O5'  TYPE=OS   CHARGE=-0.495400 END !                | \ /  \  /
+ATOM C5'  TYPE=CI   CHARGE=-0.006900 END !               H73 C5   N3
+ATOM H5'1 TYPE=H1   CHARGE= 0.075400 END !                   ||   |
+ATOM H5'2 TYPE=H1   CHARGE= 0.075400 END !                H6-C6   C2
+ATOM C4'  TYPE=CT   CHARGE= 0.162900 END !                    \  / \\
+ATOM H4'  TYPE=H1   CHARGE= 0.117600 END !                     N1   O2
+ATOM O4'  TYPE=OS   CHARGE=-0.369100 END !                      \
+ATOM C1'  TYPE=CT   CHARGE= 0.068000 END !                       \
+ATOM H1'  TYPE=H2   CHARGE= 0.180400 END !                        \
+ATOM N1   TYPE=N*   CHARGE=-0.023900 END !    O1P   H5'1 H4'  O4'  \
+ATOM C6   TYPE=CM   CHARGE=-0.220900 END !     |      |    \ /   \  \
+ATOM H6   TYPE=H4   CHARGE= 0.260700 END !    -P-O5'-C5'---C4'    C1'
+ATOM C5   TYPE=CM   CHARGE= 0.002500 END !     |      |     \     / \
+ATOM C7   TYPE=CT   CHARGE=-0.226900 END !    O2P   H5'2    C3'--C2' H1'
+ATOM H71  TYPE=HC   CHARGE= 0.077000 END !                 /  \  /  \
+ATOM H72  TYPE=HC   CHARGE= 0.077000 END !              O3' H3' H2'2 H2'1
+ATOM H73  TYPE=HC   CHARGE= 0.077000 END !               |
+ATOM C4   TYPE=C    CHARGE= 0.519400 END
+ATOM O4   TYPE=O    CHARGE=-0.556300 END
+ATOM N3   TYPE=NA   CHARGE=-0.434000 END
+ATOM H3   TYPE=H    CHARGE= 0.342000 END
+ATOM C2   TYPE=C    CHARGE= 0.567700 END
+ATOM O2   TYPE=O    CHARGE=-0.588100 END
+ATOM C3'  TYPE=CT   CHARGE= 0.071300 END
+ATOM H3'  TYPE=H1   CHARGE= 0.098500 END
+ATOM C2'  TYPE=CT   CHARGE=-0.085400 END
+ATOM H2'1 TYPE=HC   CHARGE= 0.071800 END
+ATOM H2'2 TYPE=HC   CHARGE= 0.071800 END
+ATOM O3'  TYPE=OS   CHARGE=-0.523200 END
+BOND P    O1P 
+BOND P    O2P 
+BOND P    O5' 
+BOND O5'  C5' 
+BOND C5'  H5'1
+BOND C5'  H5'2
+BOND C5'  C4' 
+BOND C4'  H4' 
+BOND C4'  O4' 
+BOND C4'  C3' 
+BOND O4'  C1' 
+BOND C1'  H1' 
+BOND C1'  N1  
+BOND C1'  C2' 
+BOND N1   C6  
+BOND N1   C2  
+BOND C6   H6  
+BOND C6   C5  
+BOND C5   C7  
+BOND C5   C4  
+BOND C7   H71 
+BOND C7   H72 
+BOND C7   H73 
+BOND C4   O4  
+BOND C4   N3  
+BOND N3   H3  
+BOND N3   C2  
+BOND C2   O2  
+BOND C3'  H3' 
+BOND C3'  C2' 
+BOND C3'  O3' 
+BOND C2'  H2'1
+BOND C2'  H2'2
+DIHE C3'  C4'  C5'  O5'  MULT 3
+DIHE C1'  O4'  C4'  C5'  MULT 2
+DIHE C1'  O4'  C4'  C3'  MULT 2
+DIHE C2'  C3'  C4'  C5'  MULT 3
+DIHE O3'  C3'  C4'  H4'  MULT 2
+DIHE H3'  C3'  C4'  O4'  MULT 2
+DIHE O3'  C3'  C4'  O4'  MULT 2
+DIHE N1   C1'  O4'  C4'  MULT 2
+DIHE C2'  C1'  O4'  C4'  MULT 2
+DIHE C6   N1   C1'  O4'  MULT 2
+DIHE H2'1 C2'  C1'  O4'  MULT 2
+DIHE H2'2 C2'  C1'  O4'  MULT 2
+DIHE H71  C7   C5   C6   MULT 2
+DIHE H72  C7   C5   C6   MULT 2
+DIHE H73  C7   C5   C6   MULT 2
+DIHE O4   C4   C5   C6   MULT 2
+DIHE C1'  C2'  C3'  C4'  MULT 3
+DIHE H2'1 C2'  C3'  O3'  MULT 2
+DIHE H2'2 C2'  C3'  O3'  MULT 2
+IMPR C2   C6   N1   C1' 
+IMPR N1   C5   C6   H6  
+IMPR N1   N3   C2   O2  
+IMPR C4   C6   C5   C7  
+IMPR C5   N3   C4   O4  
+IMPR C4   C2   N3   H3  
+DONO H3   N3  
+ACCE O2   C2  
+ACCE O4   C4  
+ACCE O1P  P   
+ACCE O2P  P   
+ACCE O3'  NONE
+ACCE O4'  NONE
+ACCE O5'  NONE
+IC P    O5'  C5'  C4'  1.5996 119.00 -146.00 110.04 1.5160
+IC O5'  C5'  C4'  C3'  1.4401 108.83 60.00 116.10 1.5284
+IC C5'  C4'  C3'  O3'  1.5160 116.10 140.00 115.12 1.4212
+IC O4'  C3'  *C4' C5'  1.4572 104.06 -120.04 116.10 1.5160
+IC C2'  C4'  *C3' O3'  1.5284 100.16 -124.08 115.12 1.4212
+IC C4'  C3'  C2'  C1'  1.5284 100.16 -30.00 102.04 1.5251
+IC C3'  C2'  C1'  N1   1.5284 101.97 147.89 113.71 1.4896
+IC O4'  C1'  N1   C2   1.5251 113.71 -97.2 125.59 1.3783
+IC C1'  C2   *N1  C6   1.4896 117.06 -179.96 122.08 1.3704
+IC C2   N1   C6   C5   1.3746 122.08 -0.02 121.23 1.3432
+IC C6   N1   C2   N3   1.3704 122.08 0.06 115.38 1.3813
+IC N1   N3   *C2  O2   1.3746 115.38 -179.95 121.70 1.2191
+IC N1   C2   N3   C4   1.3746 115.38 -0.07 126.46 1.3795
+IC C5   N3   *C4  O4   1.4439 114.07 179.98 120.59 1.2327
+IC C2   C4   *N3  H3   1.3813 126.46 180.00 116.77 1.0900
+IC C4   C6   *C5  C7   1.4439 120.78 -179.94 121.63 1.5000
+IC N1   C5   *C6  H6   0.0 0.0 180.0 0.0 0.0
+IC C6   C5   C7   H71  0.0 0.0 0.0 0.0 0.0
+IC C5   H71  *C7  H72  0.0 0.0 115.0 0.0 0.0
+IC H71  H72  *C7  H73  0.0 0.0 -115.0 0.0 0.0
+IC O4'  C2'  *C1' H1'  0.0 0.0 -115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'1 0.0 0.0 115.0 0.0 0.0
+IC C2'  C4'  *C3' H3'  0.0 0.0 115.0 0.0 0.0
+IC C3'  O4'  *C4' H4'  0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'1 0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'2 0.0 0. 115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'2 0.0 0.0 -115.0 0.0 0.0
+END
+
+RESI RA ! R-ADENOSINE
+GROUP
+ATOM P    TYPE=P    CHARGE= 1.166200 END !         H61  H62
+ATOM O1P  TYPE=O2   CHARGE=-0.776000 END !           \  /
+ATOM O2P  TYPE=O2   CHARGE=-0.776000 END !            N6
+ATOM O5'  TYPE=OS   CHARGE=-0.498900 END !            |
+ATOM C5'  TYPE=CI   CHARGE= 0.055800 END !            C6
+ATOM H5'1 TYPE=H1   CHARGE= 0.067900 END !          //  \
+ATOM H5'2 TYPE=H1   CHARGE= 0.067900 END !          N1   C5--N7\\
+ATOM C4'  TYPE=CT   CHARGE= 0.106500 END !          |    ||     C8-H8
+ATOM H4'  TYPE=H1   CHARGE= 0.117400 END !          C2   C4--N9/
+ATOM O4'  TYPE=OS   CHARGE=-0.354800 END !         / \\ /     \
+ATOM C1'  TYPE=CT   CHARGE= 0.039400 END !       H2   N3       \
+ATOM H1'  TYPE=H2   CHARGE= 0.200700 END !                      \
+ATOM N9   TYPE=N*   CHARGE=-0.025100 END !                       \
+ATOM C8   TYPE=CK   CHARGE= 0.200600 END !                        \
+ATOM H8   TYPE=H5   CHARGE= 0.155300 END !    O1P   H5'1 H4'  O4'  \
+ATOM N7   TYPE=NB   CHARGE=-0.607300 END !     |      |    \ /   \  \
+ATOM C5   TYPE=CB   CHARGE= 0.051500 END !    -P-O5'-C5'---C4'    C1'
+ATOM C6   TYPE=CA   CHARGE= 0.700900 END !     |      |     \     / \
+ATOM N6   TYPE=N2   CHARGE=-0.901900 END !    O2P   H5'2    C3'--C2' H1'
+ATOM H61  TYPE=H    CHARGE= 0.411500 END !                 /  \  /  \
+ATOM H62  TYPE=H    CHARGE= 0.411500 END !              O3' H3' O2'  H2'1
+ATOM N1   TYPE=NC   CHARGE=-0.761500 END !               |       |
+ATOM C2   TYPE=CQ   CHARGE= 0.587500 END !                      HO'2
+ATOM H2   TYPE=H5   CHARGE= 0.047300 END
+ATOM N3   TYPE=NC   CHARGE=-0.699700 END
+ATOM C4   TYPE=CB   CHARGE= 0.305300 END
+ATOM C3'  TYPE=CT   CHARGE= 0.202200 END
+ATOM H3'  TYPE=H1   CHARGE= 0.061500 END
+ATOM C2'  TYPE=CT   CHARGE= 0.067000 END
+ATOM H2'1 TYPE=H1   CHARGE= 0.097200 END
+ATOM O2'  TYPE=OH   CHARGE=-0.613900 END
+ATOM HO'2 TYPE=HO   CHARGE= 0.418600 END
+ATOM O3'  TYPE=OS   CHARGE=-0.524600 END
+BOND P    O1P 
+BOND P    O2P 
+BOND P    O5' 
+BOND O5'  C5' 
+BOND C5'  H5'1
+BOND C5'  H5'2
+BOND C5'  C4' 
+BOND C4'  H4' 
+BOND C4'  O4' 
+BOND C4'  C3' 
+BOND O4'  C1' 
+BOND C1'  H1' 
+BOND C1'  N9  
+BOND C1'  C2' 
+BOND N9   C8  
+BOND N9   C4  
+BOND C8   H8  
+BOND C8   N7  
+BOND N7   C5  
+BOND C5   C6  
+BOND C5   C4  
+BOND C6   N6  
+BOND C6   N1  
+BOND N6   H61 
+BOND N6   H62 
+BOND N1   C2  
+BOND C2   H2  
+BOND C2   N3  
+BOND N3   C4  
+BOND C3'  H3' 
+BOND C3'  C2' 
+BOND C3'  O3' 
+BOND C2'  H2'1
+BOND C2'  O2' 
+BOND O2'  HO'2
+DIHE C3'  C4'  C5'  O5'  MULT 3
+DIHE C1'  O4'  C4'  C5'  MULT 2
+DIHE C1'  O4'  C4'  C3'  MULT 2
+DIHE C2'  C3'  C4'  C5'  MULT 3
+DIHE O3'  C3'  C4'  H4'  MULT 2
+DIHE H3'  C3'  C4'  O4'  MULT 2
+DIHE O3'  C3'  C4'  O4'  MULT 2
+DIHE N9   C1'  O4'  C4'  MULT 2
+DIHE C2'  C1'  O4'  C4'  MULT 2
+DIHE C8   N9   C1'  O4'  MULT 2
+DIHE H2'1 C2'  C1'  O4'  MULT 2
+DIHE O2'  C2'  C1'  O4'  MULT 2
+DIHE C1'  C2'  C3'  C4'  MULT 3
+DIHE O2'  C2'  C3'  H3'  MULT 2
+DIHE H2'1 C2'  C3'  O3'  MULT 2
+DIHE O2'  C2'  C3'  O3'  MULT 2
+DIHE HO'2 O2'  C2'  C1'  MULT 2
+DIHE HO'2 O2'  C2'  C3'  MULT 2
+IMPR C4   C8   N9   C1' 
+IMPR N9   N7   C8   H8  
+IMPR C5   N6   C6   N1  
+IMPR C6   H61  N6   H62 
+IMPR N1   N3   C2   H2  
+DONO H61  N6  
+DONO H62  N6  
+DONO HO'2 O2' 
+ACCE N3   NONE
+ACCE N7   NONE
+ACCE N1   NONE
+ACCE O1P  P   
+ACCE O2P  P   
+ACCE O2'  NONE
+ACCE O3'  NONE
+ACCE O4'  NONE
+ACCE O5'  NONE
+IC P    O5'  C5'  C4'  1.5996 119.00 -146.00 110.04 1.5160
+IC O5'  C5'  C4'  C3'  1.4401 108.83 60.00 116.10 1.5284
+IC C5'  C4'  C3'  O3'  1.5160 116.10 140.00 115.12 1.4212
+IC O4'  C3'  *C4' C5'  1.4572 104.06 -120.04 116.10 1.5160
+IC C2'  C4'  *C3' O3'  1.5284 100.16 -124.08 115.12 1.4212
+IC C4'  C3'  C2'  C1'  1.5284 100.16 -30.00 102.04 1.5251
+IC C3'  C2'  C1'  N9   1.5284 101.97 147.80 113.71 1.4896
+IC O4'  C1'  N9   C4   1.5251 113.71 -97.2 125.59 1.3783
+IC C1'  C4   *N9  C8   1.4896 125.97 -179.94 106.0 1.367
+IC C4   N9   C8   N7   1.376 106.0 0.0 113.6 1.312
+IC C8   N9   C4   C5   1.367 106.0 0.0 105.6 1.382
+IC C8   N7   C5   C6   0.0 0.0 180.0 0.0 0.0
+IC N7   C5   C6   N1   0.0 0.0 180.0 0.0 0.0
+IC C5   C6   N1   C2   0.0 0.0 0.0 0.0 0.0
+IC N9   C5   *C4  N3   1.376 105.6 -180.0 126.9 1.342
+IC C5   N1   *C6  N6   1.409 117.6 -180.0 121.2 1.337
+IC N1   C6   N6   H61  1.337 121.2 0.0 119.0 1.01
+IC H61  C6   *N6  H62  1.01 119.0 180.0 119.00 1.01
+IC C5   N1   *C6  N6   1.409 117.6 -180.0 119.0 1.337
+IC N1   C6   N6   H61  1.337 119.0 0.0 119.0 1.01
+IC H61  C6   *N6  H62  1.01 119.0 180.0 121.00 1.01
+IC N9   N7   *C8  H8   0.0 0.0 180.0 0.0 0.0
+IC N1   N3   *C2  H2   0.0 0.0 180.0 0.0 0.0
+IC C1'  C3'  *C2' O2'  1.5284 102.04 -114.67 110.81 1.4212
+IC HO'2 O2'  C2'  C3'  0.9600 114.97 148.63 111.92 1.5284
+IC O4'  C2'  *C1' H1'  0.0 0.0 -115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'1 0.0 0.0 115.0 0.0 0.0
+IC C2'  C4'  *C3' H3'  0.0 0.0 115.0 0.0 0.0
+IC C3'  O4'  *C4' H4'  0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'1 0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'2 0.0 0.0 115.0 0.0 0.0
+END
+
+RESI RC ! R-CYTOSINE
+GROUP
+ATOM P    TYPE=P    CHARGE= 1.166200 END !                  H42  H41
+ATOM O1P  TYPE=O2   CHARGE=-0.776000 END !                    \  /
+ATOM O2P  TYPE=O2   CHARGE=-0.776000 END !                     N4
+ATOM O5'  TYPE=OS   CHARGE=-0.498900 END !                     |
+ATOM C5'  TYPE=CI   CHARGE= 0.055800 END !                     C4
+ATOM H5'1 TYPE=H1   CHARGE= 0.067900 END !                    /  \\
+ATOM H5'2 TYPE=H1   CHARGE= 0.067900 END !                H5-C5   N3
+ATOM C4'  TYPE=CT   CHARGE= 0.106500 END !                   ||   |
+ATOM H4'  TYPE=H1   CHARGE= 0.117400 END !                H6-C6   C2
+ATOM O4'  TYPE=OS   CHARGE=-0.354800 END !                    \  / \\
+ATOM C1'  TYPE=CT   CHARGE= 0.006600 END !                     N1   O2
+ATOM H1'  TYPE=H2   CHARGE= 0.202900 END !                      \
+ATOM N1   TYPE=N*   CHARGE=-0.048400 END !                       \
+ATOM C6   TYPE=CM   CHARGE= 0.005300 END !                        \
+ATOM H6   TYPE=H4   CHARGE= 0.195800 END !    O1P   H5'1 H4'  O4'  \
+ATOM C5   TYPE=CM   CHARGE=-0.521500 END !     |      |    \ /   \  \
+ATOM H5   TYPE=HA   CHARGE= 0.192800 END !    -P-O5'-C5'---C4'    C1'
+ATOM C4   TYPE=CA   CHARGE= 0.818500 END !     |      |     \     / \
+ATOM N4   TYPE=N2   CHARGE=-0.953000 END !    O2P   H5'2    C3'--C2' H1'
+ATOM H41  TYPE=H    CHARGE= 0.423400 END !                 /  \  /  \
+ATOM H42  TYPE=H    CHARGE= 0.423400 END !              O3' H3' O2'  H2'1
+ATOM N3   TYPE=NC   CHARGE=-0.758400 END !               |       |
+ATOM C2   TYPE=C    CHARGE= 0.753800 END !                      HO'2
+ATOM O2   TYPE=O    CHARGE=-0.625200 END
+ATOM C3'  TYPE=CT   CHARGE= 0.202200 END
+ATOM H3'  TYPE=H1   CHARGE= 0.061500 END
+ATOM C2'  TYPE=CT   CHARGE= 0.067000 END
+ATOM H2'1 TYPE=H1   CHARGE= 0.097200 END
+ATOM O2'  TYPE=OH   CHARGE=-0.613900 END
+ATOM HO'2 TYPE=HO   CHARGE= 0.418600 END
+ATOM O3'  TYPE=OS   CHARGE=-0.524600 END
+BOND P    O1P 
+BOND P    O2P 
+BOND P    O5' 
+BOND O5'  C5' 
+BOND C5'  H5'1
+BOND C5'  H5'2
+BOND C5'  C4' 
+BOND C4'  H4' 
+BOND C4'  O4' 
+BOND C4'  C3' 
+BOND O4'  C1' 
+BOND C1'  H1' 
+BOND C1'  N1  
+BOND C1'  C2' 
+BOND N1   C6  
+BOND N1   C2  
+BOND C6   H6  
+BOND C6   C5  
+BOND C5   H5  
+BOND C5   C4  
+BOND C4   N4  
+BOND C4   N3  
+BOND N4   H41 
+BOND N4   H42 
+BOND N3   C2  
+BOND C2   O2  
+BOND C3'  H3' 
+BOND C3'  C2' 
+BOND C3'  O3' 
+BOND C2'  H2'1
+BOND C2'  O2' 
+BOND O2'  HO'2
+DIHE C3'  C4'  C5'  O5'  MULT 3
+DIHE C1'  O4'  C4'  C5'  MULT 2
+DIHE C1'  O4'  C4'  C3'  MULT 2
+DIHE C2'  C3'  C4'  C5'  MULT 3
+DIHE O3'  C3'  C4'  H4'  MULT 2
+DIHE H3'  C3'  C4'  O4'  MULT 2
+DIHE O3'  C3'  C4'  O4'  MULT 2
+DIHE N1   C1'  O4'  C4'  MULT 2
+DIHE C2'  C1'  O4'  C4'  MULT 2
+DIHE C6   N1   C1'  O4'  MULT 2
+DIHE H2'1 C2'  C1'  O4'  MULT 2
+DIHE O2'  C2'  C1'  O4'  MULT 2
+DIHE C1'  C2'  C3'  C4'  MULT 3
+DIHE O2'  C2'  C3'  H3'  MULT 2
+DIHE H2'1 C2'  C3'  O3'  MULT 2
+DIHE O2'  C2'  C3'  O3'  MULT 2
+DIHE HO'2 O2'  C2'  C1'  MULT 2
+DIHE HO'2 O2'  C2'  C3'  MULT 2
+IMPR C2   C6   N1   C1' 
+IMPR N1   C5   C6   H6  
+IMPR N1   N3   C2   O2  
+IMPR C6   C4   C5   H5  
+IMPR C5   N4   C4   N3  
+IMPR C4   H41  N4   H42 
+DONO H42  N4  
+DONO HO'2 O2' 
+DONO H41  N4  
+ACCE O2   C2  
+ACCE N3   NONE
+ACCE O1P  P   
+ACCE O2P  P   
+ACCE O2'  NONE
+ACCE O3'  NONE
+ACCE O4'  NONE
+ACCE O5'  NONE
+IC P    O5'  C5'  C4'  1.5996 119.00 -146.00 110.04 1.5160
+IC O5'  C5'  C4'  C3'  1.4401 108.83 60.00 116.10 1.5284
+IC C5'  C4'  C3'  O3'  1.5160 116.10 140.00 115.12 1.4212
+IC O4'  C3'  *C4' C5'  1.4572 104.06 -120.04 116.10 1.5160
+IC C2'  C4'  *C3' O3'  1.5284 100.16 -124.08 115.12 1.4212
+IC C4'  C3'  C2'  C1'  1.5284 100.16 -30.00 102.04 1.5251
+IC C3'  C2'  C1'  N1   1.5284 101.97 147.89 113.71 1.4896
+IC O4'  C1'  N1   C2   1.5251 113.71 -97.2 125.59 1.3783
+IC C1'  C2   *N1  C6   1.4896 117.79 -180.00 120.6 1.364
+IC C2   N1   C6   C5   1.399 120.6 0.0 121.0 1.337
+IC C6   N1   C2   N3   1.364 120.6 0.0 118.9 1.356
+IC N1   N3   *C2  O2   1.399 118.9 180.0 121.9 1.237
+IC N1   C2   N3   C4   1.399 118.9 0.0 120.0 1.334
+IC C5   N3   *C4  N4   1.426 121.8 180.00 118.9 1.337
+IC N3   C4   N4   H41  1.337 117.9 0.00 118.9 1.01
+IC H41  C4   *N4  H42  1.01 118.9 180.00 120.7 1.01
+IC C6   C4   *C5  H5   0.0 0.0 180.0 0.0 0.0
+IC N1   C5   *C6  H6   0.0 0.0 180.0 0.0 0.0
+IC C1'  C3'  *C2' O2'  1.5284 102.04 -114.67 110.81 1.4212
+IC HO'2 O2'  C2'  C3'  0.9600 114.97 148.63 111.92 1.5284
+IC O4'  C2'  *C1' H1'  0.0 0.0 -115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'1 0.0 0.0 115.0 0.0 0.0
+IC C2'  C4'  *C3' H3'  0.0 0.0 115.0 0.0 0.0
+IC C3'  O4'  *C4' H4'  0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'1 0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'2 0.0 0.0 115.0 0.0 0.0
+END
+
+RESI RG ! R-GUANOSINE
+GROUP
+ATOM P    TYPE=P    CHARGE= 1.166200 END !           O6
+ATOM O1P  TYPE=O2   CHARGE=-0.776000 END !           ||
+ATOM O2P  TYPE=O2   CHARGE=-0.776000 END !           C6
+ATOM O5'  TYPE=OS   CHARGE=-0.498900 END !          /  \
+ATOM C5'  TYPE=CI   CHARGE= 0.055800 END !      H1-N1   C5--N7\\
+ATOM H5'1 TYPE=H1   CHARGE= 0.067900 END !         |    ||     C8-H8
+ATOM H5'2 TYPE=H1   CHARGE= 0.067900 END !         C2   C4--N9/
+ATOM C4'  TYPE=CT   CHARGE= 0.106500 END !        / \\ /      \
+ATOM H4'  TYPE=H1   CHARGE= 0.117400 END !  H21-N2   N3        \
+ATOM O4'  TYPE=OS   CHARGE=-0.354800 END !      |               \
+ATOM C1'  TYPE=CT   CHARGE= 0.019100 END !     H22               \
+ATOM H1'  TYPE=H2   CHARGE= 0.200600 END !                        \
+ATOM N9   TYPE=N*   CHARGE= 0.049200 END !    O1P   H5'1 H4'  O4'  \
+ATOM C8   TYPE=CK   CHARGE= 0.137400 END !     |      |    \ /   \  \
+ATOM H8   TYPE=H5   CHARGE= 0.164000 END !    -P-O5'-C5'---C4'    C1'
+ATOM N7   TYPE=NB   CHARGE=-0.570900 END !     |      |     \     / \
+ATOM C5   TYPE=CB   CHARGE= 0.174400 END !    O2P   H5'2    C3'--C2' H1'
+ATOM C6   TYPE=C    CHARGE= 0.477000 END !                 /  \  /  \
+ATOM O6   TYPE=O    CHARGE=-0.559700 END !              O3' H3' O2'  H2'1
+ATOM N1   TYPE=NA   CHARGE=-0.478700 END !               |       |
+ATOM H1   TYPE=H    CHARGE= 0.342400 END !                      HO'2
+ATOM C2   TYPE=CA   CHARGE= 0.765700 END
+ATOM N2   TYPE=N2   CHARGE=-0.967200 END
+ATOM H21  TYPE=H    CHARGE= 0.436400 END
+ATOM H22  TYPE=H    CHARGE= 0.436400 END
+ATOM N3   TYPE=NC   CHARGE=-0.632300 END
+ATOM C4   TYPE=CB   CHARGE= 0.122200 END
+ATOM C3'  TYPE=CT   CHARGE= 0.202200 END
+ATOM H3'  TYPE=H1   CHARGE= 0.061500 END
+ATOM C2'  TYPE=CT   CHARGE= 0.067000 END
+ATOM H2'1 TYPE=H1   CHARGE= 0.097200 END
+ATOM O2'  TYPE=OH   CHARGE=-0.613900 END
+ATOM HO'2 TYPE=HO   CHARGE= 0.418600 END
+ATOM O3'  TYPE=OS   CHARGE=-0.524600 END
+BOND P    O1P 
+BOND P    O2P 
+BOND P    O5' 
+BOND O5'  C5' 
+BOND C5'  H5'1
+BOND C5'  H5'2
+BOND C5'  C4' 
+BOND C4'  H4' 
+BOND C4'  O4' 
+BOND C4'  C3' 
+BOND O4'  C1' 
+BOND C1'  H1' 
+BOND C1'  N9  
+BOND C1'  C2' 
+BOND N9   C8  
+BOND N9   C4  
+BOND C8   H8  
+BOND C8   N7  
+BOND N7   C5  
+BOND C5   C6  
+BOND C5   C4  
+BOND C6   O6  
+BOND C6   N1  
+BOND N1   H1  
+BOND N1   C2  
+BOND C2   N2  
+BOND C2   N3  
+BOND N2   H21 
+BOND N2   H22 
+BOND N3   C4  
+BOND C3'  H3' 
+BOND C3'  C2' 
+BOND C3'  O3' 
+BOND C2'  H2'1
+BOND C2'  O2' 
+BOND O2'  HO'2
+DIHE C3'  C4'  C5'  O5'  MULT 3
+DIHE C1'  O4'  C4'  C5'  MULT 2
+DIHE C1'  O4'  C4'  C3'  MULT 2
+DIHE C2'  C3'  C4'  C5'  MULT 3
+DIHE O3'  C3'  C4'  H4'  MULT 2
+DIHE H3'  C3'  C4'  O4'  MULT 2
+DIHE O3'  C3'  C4'  O4'  MULT 2
+DIHE N9   C1'  O4'  C4'  MULT 2
+DIHE C2'  C1'  O4'  C4'  MULT 2
+DIHE C8   N9   C1'  O4'  MULT 2
+DIHE H2'1 C2'  C1'  O4'  MULT 2
+DIHE O2'  C2'  C1'  O4'  MULT 2
+DIHE C1'  C2'  C3'  C4'  MULT 3
+DIHE O2'  C2'  C3'  H3'  MULT 2
+DIHE H2'1 C2'  C3'  O3'  MULT 2
+DIHE O2'  C2'  C3'  O3'  MULT 2
+DIHE HO'2 O2'  C2'  C1'  MULT 2
+DIHE HO'2 O2'  C2'  C3'  MULT 2
+IMPR C4   C8   N9   C1' 
+IMPR N9   N7   C8   H8  
+IMPR C5   N1   C6   O6  
+IMPR C6   C2   N1   H1  
+IMPR N2   N1   C2   N3  
+IMPR C2   H21  N2   H22 
+DONO H21  N2  
+DONO H22  N2  
+DONO H1   N1  
+DONO HO'2 O2' 
+ACCE O6   C6  
+ACCE N3   NONE
+ACCE N7   NONE
+ACCE O1P  P   
+ACCE O2P  P   
+ACCE O2'  NONE
+ACCE O3'  NONE
+ACCE O4'  NONE
+ACCE O5'  NONE
+IC P    O5'  C5'  C4'  1.5996 119.00 -146.00 110.04 1.5160
+IC O5'  C5'  C4'  C3'  1.4401 108.83 60.00 116.10 1.5284
+IC C5'  C4'  C3'  O3'  1.5160 116.10 140.00 115.12 1.4212
+IC O4'  C3'  *C4' C5'  1.4572 104.06 -120.04 116.10 1.5160
+IC C2'  C4'  *C3' O3'  1.5284 100.16 -124.08 115.12 1.4212
+IC C4'  C3'  C2'  C1'  1.5284 100.16 -30.00 102.04 1.5251
+IC C3'  C2'  C1'  N9   1.5284 101.97 147.80 113.71 1.4896
+IC O4'  C1'  N9   C4   1.5251 113.71 -97.2 125.59 1.3783
+IC C1'  C4   *N9  C8   1.4896 125.59 -179.99 106.0 1.374
+IC C4   N9   C8   N7   1.377 106.0 0.0 113.5 1.304
+IC C8   N9   C4   C5   1.374 106.0 0.0 105.6 1.377
+IC N9   C5   *C4  N3   1.377 105.6 180.0 128.4 1.355
+IC C5   C4   N3   C2   1.377 128.4 0.0 111.8 1.327
+IC C4   N3   C2   N1   1.355 111.8 0.0 124.0 1.375
+IC N1   N3   *C2  N2   1.375 124.0 180.0 119.7 1.341
+IC N3   C2   N2   H21  1.327 119.7 180.0 127.0 1.01
+IC H21  C2   *N2  H22  1.01 127.0 -180.0 116.5 1.01
+IC N3   C2   N1   C6   1.327 124.0 0.0 124.9 1.393
+IC C6   C2   *N1  H1   1.393 124.9 180.0 117.4 1.03
+IC C5   N1   *C6  O6   1.415 111.7 180.0 120.0 1.239
+IC N9   N7   *C8  H8   0.0 0.0 180.0 0.0 0.0
+IC C1'  C3'  *C2' O2'  1.5284 102.04 -114.67 110.81 1.4212
+IC HO'2 O2'  C2'  C3'  0.9600 114.97 148.63 111.92 1.5284
+IC O4'  C2'  *C1' H1'  0.0 0.0 -115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'1 0.0 0.0 115.0 0.0 0.0
+IC C2'  C4'  *C3' H3'  0.0 0.0 115.0 0.0 0.0
+IC C3'  O4'  *C4' H4'  0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'1 0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'2 0.0 0.0 115.0 0.0 0.0
+END
+
+RESI RU ! R-URACIL
+GROUP
+ATOM P    TYPE=P    CHARGE= 1.166200 END !                     O4
+ATOM O1P  TYPE=O2   CHARGE=-0.776000 END !                     ||
+ATOM O2P  TYPE=O2   CHARGE=-0.776000 END !                     C4    H3
+ATOM O5'  TYPE=OS   CHARGE=-0.498900 END !                    /  \  /
+ATOM C5'  TYPE=CI   CHARGE= 0.055800 END !                H5-C5   N3
+ATOM H5'1 TYPE=H1   CHARGE= 0.067900 END !                   ||   |
+ATOM H5'2 TYPE=H1   CHARGE= 0.067900 END !                H6-C6   C2
+ATOM C4'  TYPE=CT   CHARGE= 0.106500 END !                    \  / \\
+ATOM H4'  TYPE=H1   CHARGE= 0.117400 END !                     N1   O2
+ATOM O4'  TYPE=OS   CHARGE=-0.354800 END !                      \
+ATOM C1'  TYPE=CT   CHARGE= 0.067400 END !                       \
+ATOM H1'  TYPE=H2   CHARGE= 0.182400 END !                        \
+ATOM N1   TYPE=N*   CHARGE= 0.041800 END !    O1P   H5'1 H4'  O4'  \
+ATOM C6   TYPE=CM   CHARGE=-0.112600 END !     |      |    \ /   \  \
+ATOM H6   TYPE=H4   CHARGE= 0.218800 END !    -P-O5'-C5'---C4'    C1'
+ATOM C5   TYPE=CM   CHARGE=-0.363500 END !     |      |     \     / \
+ATOM H5   TYPE=HA   CHARGE= 0.181100 END !    O2P   H5'2    C3'--C2' H1'
+ATOM C4   TYPE=C    CHARGE= 0.595200 END !                 /  \  /  \
+ATOM O4   TYPE=O    CHARGE=-0.576100 END !              O3' H3' O2'  H2'1
+ATOM N3   TYPE=NA   CHARGE=-0.354900 END !               |       |
+ATOM H3   TYPE=H    CHARGE= 0.315400 END !                      HO'2
+ATOM C2   TYPE=C    CHARGE= 0.468700 END
+ATOM O2   TYPE=O    CHARGE=-0.547700 END
+ATOM C3'  TYPE=CT   CHARGE= 0.202200 END
+ATOM H3'  TYPE=H1   CHARGE= 0.061500 END
+ATOM C2'  TYPE=CT   CHARGE= 0.067000 END
+ATOM H2'1 TYPE=H1   CHARGE= 0.097200 END
+ATOM O2'  TYPE=OH   CHARGE=-0.613900 END
+ATOM HO'2 TYPE=HO   CHARGE= 0.418600 END
+ATOM O3'  TYPE=OS   CHARGE=-0.524600 END
+BOND P    O1P 
+BOND P    O2P 
+BOND P    O5' 
+BOND O5'  C5' 
+BOND C5'  H5'1
+BOND C5'  H5'2
+BOND C5'  C4' 
+BOND C4'  H4' 
+BOND C4'  O4' 
+BOND C4'  C3' 
+BOND O4'  C1' 
+BOND C1'  H1' 
+BOND C1'  N1  
+BOND C1'  C2' 
+BOND N1   C6  
+BOND N1   C2  
+BOND C6   H6  
+BOND C6   C5  
+BOND C5   H5  
+BOND C5   C4  
+BOND C4   O4  
+BOND C4   N3  
+BOND N3   H3  
+BOND N3   C2  
+BOND C2   O2  
+BOND C3'  H3' 
+BOND C3'  C2' 
+BOND C3'  O3' 
+BOND C2'  H2'1
+BOND C2'  O2' 
+BOND O2'  HO'2
+DIHE C3'  C4'  C5'  O5'  MULT 3
+DIHE C1'  O4'  C4'  C5'  MULT 2
+DIHE C1'  O4'  C4'  C3'  MULT 2
+DIHE C2'  C3'  C4'  C5'  MULT 3
+DIHE O3'  C3'  C4'  H4'  MULT 2
+DIHE H3'  C3'  C4'  O4'  MULT 2
+DIHE O3'  C3'  C4'  O4'  MULT 2
+DIHE N1   C1'  O4'  C4'  MULT 2
+DIHE C2'  C1'  O4'  C4'  MULT 2
+DIHE C6   N1   C1'  O4'  MULT 2
+DIHE H2'1 C2'  C1'  O4'  MULT 2
+DIHE O2'  C2'  C1'  O4'  MULT 2
+DIHE O4   C4   C5   C6   MULT 2
+DIHE C1'  C2'  C3'  C4'  MULT 3
+DIHE O2'  C2'  C3'  H3'  MULT 2
+DIHE H2'1 C2'  C3'  O3'  MULT 2
+DIHE O2'  C2'  C3'  O3'  MULT 2
+DIHE HO'2 O2'  C2'  C1'  MULT 2
+DIHE HO'2 O2'  C2'  C3'  MULT 2
+IMPR C2   C6   N1   C1' 
+IMPR N1   C5   C6   H6  
+IMPR N1   N3   C2   O2  
+IMPR C6   C4   C5   H5  
+IMPR C5   N3   C4   O4  
+IMPR C4   C2   N3   H3  
+DONO H3   N3  
+DONO HO'2 O2' 
+ACCE O2   C2  
+ACCE O4   C4  
+ACCE O1P  P   
+ACCE O2P  P   
+ACCE O2'  NONE
+ACCE O3'  NONE
+ACCE O4'  NONE
+ACCE O5'  NONE
+IC P    O5'  C5'  C4'  1.5996 119.00 -151.39 110.04 1.5160
+IC O5'  C5'  C4'  C3'  1.4401 108.83 -179.85 116.10 1.5284
+IC C5'  C4'  C3'  O3'  1.5160 116.10 76.70 115.12 1.4212
+IC O4'  C3'  *C4' C5'  1.4572 104.06 -120.04 116.10 1.5160
+IC C2'  C4'  *C3' O3'  1.5284 100.16 -124.08 115.12 1.4212
+IC C4'  C3'  C2'  C1'  1.5284 100.16 39.58 102.04 1.5251
+IC C3'  C2'  C1'  N1   1.5284 101.97 144.39 113.71 1.4896
+IC O4'  C1'  N1   C2   1.5251 113.71 -96.0 117.06 1.3746
+IC C1'  C2   *N1  C6   1.4896 117.06 -180.0 121.3 1.379
+IC C2   N1   C6   C5   1.379 121.3 0.0 122.8 1.338
+IC C6   N1   C2   N3   1.380 121.3 0.0 114.8 1.373
+IC N1   N3   *C2  O2   1.379 114.8 -180.0 122.0 1.218
+IC N1   C2   N3   C4   1.379 114.8 0.0 127.0 1.383
+IC C5   N3   *C4  O4   1.440 114.7 180.0 119.8 1.227
+IC C2   C4   *N3  H3   1.373 127.0 180.0 116.5 1.03
+IC C6   C4   *C5  H5   0.0 0.0 180.0 0.0 0.0
+IC N1   C5   *C6  H6   0.0 0.0 180.0 0.0 0.0
+IC C1'  C3'  *C2' O2'  1.5284 102.04 -114.67 110.81 1.4212
+IC HO'2 O2'  C2'  C3'  0.9600 114.97 148.63 111.92 1.5284
+IC O4'  C2'  *C1' H1'  0.0 0.0 -115.0 0.0 0.0
+IC C1'  C3'  *C2' H2'1 0.0 0.0 115.0 0.0 0.0
+IC C2'  C4'  *C3' H3'  0.0 0.0 115.0 0.0 0.0
+IC C3'  O4'  *C4' H4'  0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'1 0.0 0.0 -115.0 0.0 0.0
+IC C4'  O5'  *C5' H5'2 0.0 0.0 115.0 0.0 0.0
+END
+
+PRES DN3 ! DNA 3'-terminal patch
+MODI ATOM -O3'  TYPE=OH   CHARGE=-0.654900 END
+ADD  ATOM -H3T  TYPE=HO   CHARGE= 0.439600 END
+ADD  BOND -O3'  -H3T 
+ADD  ANGL -H3T  -O3'  -C3' 
+ADD  DIHE -C4'  -C3'  -O3'  -H3T  MULT 2
+ADD  DIHE -H3'  -C3'  -O3'  -H3T 
+ADD  DIHE -C2'  -C3'  -O3'  -H3T  MULT 2
+ADD  DONO -H3T  -O3' 
+ADD  IC -H3T  -O3'  -C3'  -C4'  0.9600 114.97 148.63 111.92 1.5284
+END
+
+PRES DN5 ! DNA 5'-terminal patch
+DELE ATOM +P    END
+DELE ATOM +O1P  END
+DELE ATOM +O2P  END
+ADD  ATOM +H5T  TYPE=HO   CHARGE= 0.442200 END
+MODI ATOM +O5'  TYPE=OH   CHARGE=-0.631800 END
+ADD  BOND +H5T  +O5' 
+ADD  ANGL +H5T  +O5'  +C5' 
+ADD  DIHE +H5'1 +C5'  +O5'  +H5T 
+ADD  DIHE +H5'2 +C5'  +O5'  +H5T 
+ADD  DIHE +C4'  +C5'  +O5'  +H5T 
+ADD  DONO +H5T  +O5' 
+ADD  IC +H5T  +O5'  +C5'  +C4'  0.0000 0.00 180.00 0.00 0.0000
+END
+
+PRES RN3 ! RNA 3'-terminal patch
+MODI ATOM -O3'  TYPE=OH   CHARGE=-0.654100 END
+ADD  ATOM -H3T  TYPE=HO   CHARGE= 0.437600 END
+ADD  BOND -O3'  -H3T 
+ADD  ANGL -H3T  -O3'  -C3' 
+ADD  DIHE -C4'  -C3'  -O3'  -H3T  MULT 2
+ADD  DIHE -H3'  -C3'  -O3'  -H3T 
+ADD  DIHE -C2'  -C3'  -O3'  -H3T  MULT 2
+ADD  DONO -H3T  -O3' 
+ADD  IC -H3T  -O3'  -C3'  -C4'  0.9600 114.97 148.63 111.92 1.5284
+END
+
+PRES RN5 ! RNA 5'-terminal patch
+DELE ATOM +P    END
+DELE ATOM +O1P  END
+DELE ATOM +O2P  END
+ADD  ATOM +H5T  TYPE=HO   CHARGE= 0.429500 END
+MODI ATOM +O5'  TYPE=OH   CHARGE=-0.622300 END
+ADD  BOND +H5T  +O5' 
+ADD  ANGL +H5T  +O5'  +C5' 
+ADD  DIHE +H5'1 +C5'  +O5'  +H5T 
+ADD  DIHE +H5'2 +C5'  +O5'  +H5T 
+ADD  DIHE +C4'  +C5'  +O5'  +H5T 
+ADD  DONO +H5T  +O5' 
+ADD  IC +H5T  +O5'  +C5'  +C4'  0.0000 0.00 180.00 0.00 0.0000
+END
+
+PRES NUCL ! Generic nucleic acid link
+ADD  BOND -O3'  +P   
+ADD  ANGL +P    -O3'  -C3' 
+ADD  ANGL -O3'  +P    +O1P 
+ADD  ANGL -O3'  +P    +O2P 
+ADD  ANGL -O3'  +P    +O5' 
+ADD  DIHE +O1P  +P    -O3'  -C3' 
+ADD  DIHE +O2P  +P    -O3'  -C3' 
+ADD  DIHE +O5'  +P    -O3'  -C3'  MULT 2
+ADD  DIHE -C4'  -C3'  -O3'  +P   
+ADD  DIHE -H3'  -C3'  -O3'  +P   
+ADD  DIHE -C2'  -C3'  -O3'  +P   
+ADD  DIHE +C5'  +O5'  +P    -O3'  MULT 3
+ADD  IC -O3'  +P    +O5'  +C5'  1.6001 101.45 -46.90 119.00 1.4401
+ADD  IC -O3'  +O5'  *+P   +O1P  1.6001 101.45 -115.82 109.74 1.4802
+ADD  IC -O3'  +O5'  *+P   +O2P  1.6001 101.45 115.90 109.80 1.4801
+ADD  IC -C4'  -C3'  -O3'  +P    1.5284 111.92 155.00 119.05 1.6001
+ADD  IC -C3'  -O3'  +P    +O5'  1.4212 119.05 -95.20 101.45 1.5996
+END
+
+!-------------
+! Amino acids
+!-------------
+
+RESI ALA ! ALANINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE= 0.033700 END !     |     HB1
+ATOM HA   TYPE=H1   CHARGE= 0.082300 END !     |    /
+ATOM CB   TYPE=CT   CHARGE=-0.182500 END !  HA-CA--CB-HB2
+ATOM HB1  TYPE=HC   CHARGE= 0.060300 END !     |    \
+ATOM HB2  TYPE=HC   CHARGE= 0.060300 END !     |     HB3
+ATOM HB3  TYPE=HC   CHARGE= 0.060300 END !   O=C
+ATOM C    TYPE=C    CHARGE= 0.597300 END !     |
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB1 
+BOND CB   HB2 
+BOND CB   HB3 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DONO H    N   
+ACCE O    C   
+IC N    C    *CA  CB   1.4592 114.4400 123.2300 111.0900 1.5461
+IC N    C    *CA  HA   1.4592 114.4400 -120.4500 106.3900 1.0840
+IC C    CA   CB   HB1  1.5390 111.0900 177.2500 109.6000 1.1109
+IC HB1  CA   *CB  HB2  1.1109 109.6000 119.1300 111.0500 1.1119
+IC HB1  CA   *CB  HB3  1.1109 109.6000 -119.5800 111.6100 1.1114
+END
+
+RESI ARG ! ARGININE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.347900 END !     |                      HH11
+ATOM H    TYPE=H    CHARGE= 0.274700 END !   H-N                       |
+ATOM CA   TYPE=CT   CHARGE=-0.263700 END !     |   HB2 HG2 HD2 HE     NH1-HH12
+ATOM HA   TYPE=H1   CHARGE= 0.156000 END !     |   |   |   |   |    //(+)
+ATOM CB   TYPE=CT   CHARGE=-0.000700 END !  HA-CA--CB--CG--CD--NE--CZ
+ATOM HB2  TYPE=HC   CHARGE= 0.032700 END !     |   |   |   |         \
+ATOM HB3  TYPE=HC   CHARGE= 0.032700 END !     |   HB3 HG3 HD3        NH2-HH22
+ATOM CG   TYPE=CT   CHARGE= 0.039000 END !   O=C                       |
+ATOM HG2  TYPE=HC   CHARGE= 0.028500 END !     |                      HH21
+ATOM HG3  TYPE=HC   CHARGE= 0.028500 END
+ATOM CD   TYPE=CT   CHARGE= 0.048600 END
+ATOM HD2  TYPE=H1   CHARGE= 0.068700 END
+ATOM HD3  TYPE=H1   CHARGE= 0.068700 END
+ATOM NE   TYPE=N2   CHARGE=-0.529500 END
+ATOM HE   TYPE=H    CHARGE= 0.345600 END
+ATOM CZ   TYPE=CA   CHARGE= 0.807600 END
+ATOM NH1  TYPE=N2   CHARGE=-0.862700 END
+ATOM HH11 TYPE=H    CHARGE= 0.447800 END
+ATOM HH12 TYPE=H    CHARGE= 0.447800 END
+ATOM NH2  TYPE=N2   CHARGE=-0.862700 END
+ATOM HH21 TYPE=H    CHARGE= 0.447800 END
+ATOM HH22 TYPE=H    CHARGE= 0.447800 END
+ATOM C    TYPE=C    CHARGE= 0.734100 END
+ATOM O    TYPE=O    CHARGE=-0.589400 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   HG2 
+BOND CG   HG3 
+BOND CG   CD  
+BOND CD   HD2 
+BOND CD   HD3 
+BOND CD   NE  
+BOND NE   HE  
+BOND NE   CZ  
+BOND CZ   NH1 
+BOND CZ   NH2 
+BOND NH1  HH11
+BOND NH1  HH12
+BOND NH2  HH21
+BOND NH2  HH22
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DIHE CD   CG   CB   CA   MULT 3
+IMPR CD   CZ   NE   HE  
+IMPR NE   NH1  CZ   NH2 
+IMPR CZ   HH11 NH1  HH12
+IMPR CZ   HH21 NH2  HH22
+DONO H    N   
+DONO HE   NE  
+DONO HH11 NH1 
+DONO HH12 NH1 
+DONO HH21 NH2 
+DONO HH22 NH2 
+ACCE O    C   
+IC N    C    *CA  CB   1.4544 109.8600 123.6400 112.2600 1.5552
+IC N    C    *CA  HA   1.4544 109.8600 -117.9300 106.6100 1.0836
+IC N    CA   CB   CG   1.4544 110.7000 180.0000 115.9500 1.5475
+IC CG   CA   *CB  HB2  1.5475 115.9500 120.0500 106.4000 1.1163
+IC CG   CA   *CB  HB3  1.5475 115.9500 -125.8100 109.5500 1.1124
+IC CA   CB   CG   CD   1.5552 115.9500 180.0000 114.0100 1.5384
+IC CD   CB   *CG  HG2  1.5384 114.0100 125.2000 108.5500 1.1121
+IC CD   CB   *CG  HG3  1.5384 114.0100 -120.3000 108.9600 1.1143
+IC CB   CG   CD   NE   1.5475 114.0100 180.0000 107.0900 1.5034
+IC NE   CG   *CD  HD2  1.5034 107.0900 120.6900 109.4100 1.1143
+IC NE   CG   *CD  HD3  1.5034 107.0900 -119.0400 111.5200 1.1150
+IC CG   CD   NE   CZ   1.5384 107.0900 180.0000 123.0500 1.3401
+IC CZ   CD   *NE  HE   1.3401 123.0500 180.0000 113.1400 1.0065
+IC CD   NE   CZ   NH1  1.5034 123.0500 180.0000 118.0600 1.3311
+IC NE   CZ   NH1  HH11 1.3401 118.0600 -178.2800 120.6100 0.9903
+IC HH11 CZ   *NH1 HH12 0.9903 120.6100 171.1900 116.2900 1.0023
+IC NH1  NE   *CZ  NH2  1.3311 118.0600 178.6400 122.1400 1.3292
+IC NE   CZ   NH2  HH21 1.3401 122.1400 -174.1400 119.9100 0.9899
+IC HH21 CZ   *NH2 HH22 0.9899 119.9100 166.1600 116.8800 0.9914
+END
+
+RESI ASH ! ASP neutral
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE= 0.034100 END !     |   HB2   OD1
+ATOM HA   TYPE=H1   CHARGE= 0.086400 END !     |   |    //
+ATOM CB   TYPE=CT   CHARGE=-0.031600 END !  HA-CA--CB--CG
+ATOM HB2  TYPE=HC   CHARGE= 0.048800 END !     |   |    \
+ATOM HB3  TYPE=HC   CHARGE= 0.048800 END !     |   HB3   OD2--HD2
+ATOM CG   TYPE=C    CHARGE= 0.646200 END !   O=C
+ATOM OD1  TYPE=O    CHARGE=-0.555400 END !     |
+ATOM OD2  TYPE=OH   CHARGE=-0.637600 END
+ATOM HD2  TYPE=HO   CHARGE= 0.474700 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   OD1 
+BOND CG   OD2 
+BOND OD2  HD2 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DIHE OD1  CG   CB   HB2  MULT 3
+DIHE OD1  CG   CB   HB3  MULT 3
+DIHE HD2  OD2  CG   OD1  MULT 2
+IMPR CB   OD1  CG   OD2 
+DONO H    N   
+DONO HD2  OD2 
+ACCE OD1  CG  
+ACCE OD2  CG  
+ACCE O    C   
+IC N    C    *CA  CB   1.4490 105.6300 122.3300 114.1000 1.5619
+IC N    C    *CA  HA   1.4490 105.6300 -116.4000 106.7700 1.0841
+IC N    CA   CB   CG   1.4490 111.1000 180.0000 112.6000 1.5218
+IC CG   CA   *CB  HB2  1.5218 112.6000 119.2200 109.2300 1.1086
+IC CG   CA   *CB  HB3  1.5218 112.6000 -121.6100 110.6400 1.1080
+IC CA   CB   CG   OD1  1.5619 112.6000 180.0000 117.9900 1.2565
+IC OD1  CB   *CG  OD2  1.2565 117.9900 -170.2300 117.7000 1.2541
+IC HD2  OD2  CG   OD1  0.0000 0.0000 0.0000 0.0000 0.0000
+END
+
+RESI ASN ! ASPARAGINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE= 0.014300 END !     |   HB2 OD1    HD21 (cis to OD1)
+ATOM HA   TYPE=H1   CHARGE= 0.104800 END !     |   |   ||    /
+ATOM CB   TYPE=CT   CHARGE=-0.204100 END !  HA-CA--CB--CG--ND2
+ATOM HB2  TYPE=HC   CHARGE= 0.079700 END !     |   |         \
+ATOM HB3  TYPE=HC   CHARGE= 0.079700 END !     |   HB3        HD22 (trans to OD1)
+ATOM CG   TYPE=C    CHARGE= 0.713000 END !   O=C
+ATOM OD1  TYPE=O    CHARGE=-0.593100 END !     |
+ATOM ND2  TYPE=N    CHARGE=-0.919100 END
+ATOM HD21 TYPE=H    CHARGE= 0.419600 END
+ATOM HD22 TYPE=H    CHARGE= 0.419600 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   OD1 
+BOND CG   ND2 
+BOND ND2  HD21
+BOND ND2  HD22
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DIHE ND2  CG   CB   CA   MULT 4
+DIHE OD1  CG   CB   HB2  MULT 3
+DIHE OD1  CG   CB   HB3  MULT 3
+DIHE HD21 ND2  CG   OD1  MULT 2
+DIHE HD22 ND2  CG   OD1  MULT 2
+IMPR CB   ND2  CG   OD1 
+IMPR CG   HD21 ND2  HD22
+DONO H    N   
+DONO HD21 ND2 
+DONO HD22 ND2 
+ACCE OD1  CG  
+ACCE O    C   
+IC N    C    *CA  CB   1.4510 105.2300 121.1800 113.0400 1.5627
+IC N    C    *CA  HA   1.4510 105.2300 -115.5200 107.6300 1.0848
+IC N    CA   CB   CG   1.4510 110.9100 180.0000 114.3000 1.5319
+IC CG   CA   *CB  HB2  1.5319 114.3000 119.1700 107.8200 1.1120
+IC CG   CA   *CB  HB3  1.5319 114.3000 -123.7400 110.3400 1.1091
+IC CA   CB   CG   OD1  1.5627 114.3000 180.0000 122.5600 1.2323
+IC OD1  CB   *CG  ND2  1.2323 122.5600 -179.1900 116.1500 1.3521
+IC CB   CG   ND2  HD21 1.5319 116.1500 -179.2600 117.3500 0.9963
+IC HD21 CG   *ND2 HD22 0.9963 117.3500 178.0200 120.0500 0.9951
+END
+
+RESI ASP ! ASPARTIC ACID
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.516300 END !     |
+ATOM H    TYPE=H    CHARGE= 0.293600 END !   H-N
+ATOM CA   TYPE=CT   CHARGE= 0.038100 END !     |   HB2   OD1
+ATOM HA   TYPE=H1   CHARGE= 0.088000 END !     |   |    //
+ATOM CB   TYPE=CT   CHARGE=-0.030300 END !  HA-CA--CB--CG
+ATOM HB2  TYPE=HC   CHARGE=-0.012200 END !     |   |    \
+ATOM HB3  TYPE=HC   CHARGE=-0.012200 END !     |   HB3   OD2(-)
+ATOM CG   TYPE=C    CHARGE= 0.799400 END !   O=C
+ATOM OD1  TYPE=O2   CHARGE=-0.801400 END !     |
+ATOM OD2  TYPE=O2   CHARGE=-0.801400 END
+ATOM C    TYPE=C    CHARGE= 0.536600 END
+ATOM O    TYPE=O    CHARGE=-0.581900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   OD1 
+BOND CG   OD2 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+IMPR CB   OD1  CG   OD2 
+DONO H    N   
+ACCE OD1  CG  
+ACCE OD2  CG  
+ACCE O    C   
+IC N    C    *CA  CB   1.4490 105.6300 122.3300 114.1000 1.5619
+IC N    C    *CA  HA   1.4490 105.6300 -116.4000 106.7700 1.0841
+IC N    CA   CB   CG   1.4490 111.1000 180.0000 112.6000 1.5218
+IC CG   CA   *CB  HB2  1.5218 112.6000 119.2200 109.2300 1.1086
+IC CG   CA   *CB  HB3  1.5218 112.6000 -121.6100 110.6400 1.1080
+IC CA   CB   CG   OD1  1.5619 112.6000 180.0000 117.9900 1.2565
+IC OD1  CB   *CG  OD2  1.2565 117.9900 -170.2300 117.7000 1.2541
+END
+
+RESI CYM ! CYSTEINE with negative charge
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE=-0.035100 END !     |   HB2
+ATOM HA   TYPE=H1   CHARGE= 0.050800 END !     |   |
+ATOM CB   TYPE=CT   CHARGE=-0.241300 END !  HA-CA--CB--SG(-)
+ATOM HB3  TYPE=H1   CHARGE= 0.112200 END !     |   |
+ATOM HB2  TYPE=H1   CHARGE= 0.112200 END !     |   HB3
+ATOM SG   TYPE=SH   CHARGE=-0.884400 END !   O=C
+ATOM C    TYPE=C    CHARGE= 0.597300 END !     |
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB3 
+BOND CB   HB2 
+BOND CB   SG  
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DONO H    N   
+ACCE SG   NONE
+ACCE O    C   
+IC N    C    *CA  CB   1.4533 105.8900 121.7900 111.9800 1.5584
+IC N    C    *CA  HA   1.4533 105.8900 -116.3400 107.7100 1.0837
+IC N    CA   CB   SG   1.4533 111.5600 180.0000 113.8700 1.8359
+IC SG   CA   *CB  HB2  1.8359 113.8700 119.9100 107.2400 1.1134
+IC SG   CA   *CB  HB3  1.8359 113.8700 -125.3200 109.8200 1.1124
+END
+
+RESI CYS ! CYSTEINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE= 0.021300 END !     |   HB2
+ATOM HA   TYPE=H1   CHARGE= 0.112400 END !     |   |
+ATOM CB   TYPE=CT   CHARGE=-0.123100 END !  HA-CA--CB--SG
+ATOM HB2  TYPE=H1   CHARGE= 0.111200 END !     |   |     \
+ATOM HB3  TYPE=H1   CHARGE= 0.111200 END !     |   HB3    HG
+ATOM SG   TYPE=SH   CHARGE=-0.311900 END !   O=C
+ATOM HG   TYPE=HS   CHARGE= 0.193300 END !     |
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   SG  
+BOND SG   HG  
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DONO H    N   
+DONO HG   SG  
+ACCE O    C   
+IC N    C    *CA  CB   1.4533 105.8900 121.7900 111.9800 1.5584
+IC N    C    *CA  HA   1.4533 105.8900 -116.3400 107.7100 1.0837
+IC N    CA   CB   SG   1.4533 111.5600 180.0000 113.8700 1.8359
+IC SG   CA   *CB  HB2  1.8359 113.8700 119.9100 107.2400 1.1134
+IC SG   CA   *CB  HB3  1.8359 113.8700 -125.3200 109.8200 1.1124
+IC CA   CB   SG   HG   1.5584 113.8700 176.9600 97.1500 1.3341
+END
+
+RESI CYX ! CYSTEINE (S-S BRIDGE)
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE= 0.042900 END !     |   HB2
+ATOM HA   TYPE=H1   CHARGE= 0.076600 END !     |   |
+ATOM CB   TYPE=CT   CHARGE=-0.079000 END !  HA-CA--CB--SG--
+ATOM HB2  TYPE=H1   CHARGE= 0.091000 END !     |   |
+ATOM HB3  TYPE=H1   CHARGE= 0.091000 END !     |   HB3
+ATOM SG   TYPE=S    CHARGE=-0.108100 END !   O=C
+ATOM C    TYPE=C    CHARGE= 0.597300 END !     |
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   SG  
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DONO H    N   
+ACCE O    C   
+IC N    C    *CA  CB   1.4533 105.8900 121.7900 111.9800 1.5584
+IC N    C    *CA  HA   1.4533 105.8900 -116.3400 107.7100 1.0837
+IC N    CA   CB   SG   1.4533 111.5600 180.0000 113.8700 1.8359
+IC SG   CA   *CB  HB2  1.8359 113.8700 119.9100 107.2400 1.1134
+IC SG   CA   *CB  HB3  1.8359 113.8700 -125.3200 109.8200 1.1124
+END
+
+RESI GLH ! GLU neutral
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE= 0.014500 END !     |   HB2 HG2   OE1
+ATOM HA   TYPE=H1   CHARGE= 0.077900 END !     |   |   |    //
+ATOM CB   TYPE=CT   CHARGE=-0.007100 END !  HA-CA--CB--CG--CD
+ATOM HB2  TYPE=HC   CHARGE= 0.025600 END !     |   |   |    \
+ATOM HB3  TYPE=HC   CHARGE= 0.025600 END !     |   HB3 HG3   OE2--HE2
+ATOM CG   TYPE=CT   CHARGE=-0.017400 END !   O=C
+ATOM HG2  TYPE=HC   CHARGE= 0.043000 END !     |
+ATOM HG3  TYPE=HC   CHARGE= 0.043000 END
+ATOM CD   TYPE=C    CHARGE= 0.680100 END
+ATOM OE1  TYPE=O    CHARGE=-0.583800 END
+ATOM OE2  TYPE=OH   CHARGE=-0.651100 END
+ATOM HE2  TYPE=HO   CHARGE= 0.464100 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   HG2 
+BOND CG   HG3 
+BOND CG   CD  
+BOND CD   OE1 
+BOND CD   OE2 
+BOND OE2  HE2 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DIHE OE1  CD   CG   HG2  MULT 3
+DIHE OE1  CD   CG   HG3  MULT 3
+DIHE HE2  OE2  CD   OE1  MULT 2
+IMPR CG   OE1  CD   OE2 
+DONO H    N   
+DONO HE2  OE2 
+ACCE OE1  CD  
+ACCE OE2  CD  
+ACCE O    C   
+IC N    C    *CA  CB   1.4512 107.2700 121.9000 111.7100 1.5516
+IC N    C    *CA  HA   1.4512 107.2700 -118.0600 107.2600 1.0828
+IC N    CA   CB   CG   1.4512 111.0400 180.0000 115.6900 1.5557
+IC CG   CA   *CB  HB2  1.5557 115.6900 121.2200 108.1600 1.1145
+IC CG   CA   *CB  HB3  1.5557 115.6900 -123.6500 109.8100 1.1131
+IC CA   CB   CG   CD   1.5516 115.6900 180.0000 115.7300 1.5307
+IC CD   CB   *CG  HG2  1.5307 115.7300 117.3800 109.5000 1.1053
+IC CD   CB   *CG  HG3  1.5307 115.7300 -121.9600 111.0000 1.1081
+IC CB   CG   CD   OE1  1.5557 115.7300 180.0000 114.9900 1.2590
+IC OE1  CG   *CD  OE2  1.2590 114.9900 -179.1000 120.0800 1.2532
+IC HE2  OE2  CD   OE1  0.0000 0.0000 0.0000 0.0000 0.0000
+END
+
+RESI GLN ! GLUTAMINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE=-0.003100 END !     |   HB2 HG2 OE1   HE21 (cis to OE1)
+ATOM HA   TYPE=H1   CHARGE= 0.085000 END !     |   |   |   ||    /
+ATOM CB   TYPE=CT   CHARGE=-0.003600 END !  HA-CA--CB--CG--CD--NE2
+ATOM HB2  TYPE=HC   CHARGE= 0.017100 END !     |   |   |         \
+ATOM HB3  TYPE=HC   CHARGE= 0.017100 END !     |   HB3 HG3       HE22 (trans to OE1)
+ATOM CG   TYPE=CT   CHARGE=-0.064500 END !   O=C
+ATOM HG2  TYPE=HC   CHARGE= 0.035200 END !     |
+ATOM HG3  TYPE=HC   CHARGE= 0.035200 END
+ATOM CD   TYPE=C    CHARGE= 0.695100 END
+ATOM OE1  TYPE=O    CHARGE=-0.608600 END
+ATOM NE2  TYPE=N    CHARGE=-0.940700 END
+ATOM HE21 TYPE=H    CHARGE= 0.425100 END
+ATOM HE22 TYPE=H    CHARGE= 0.425100 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   HG2 
+BOND CG   HG3 
+BOND CG   CD  
+BOND CD   OE1 
+BOND CD   NE2 
+BOND NE2  HE21
+BOND NE2  HE22
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DIHE NE2  CD   CG   CB   MULT 4
+DIHE OE1  CD   CG   HG2  MULT 3
+DIHE OE1  CD   CG   HG3  MULT 3
+DIHE HE21 NE2  CD   OE1  MULT 2
+DIHE HE22 NE2  CD   OE1  MULT 2
+IMPR CG   NE2  CD   OE1 
+IMPR CD   HE21 NE2  HE22
+DONO H    N   
+DONO HE21 NE2 
+DONO HE22 NE2 
+ACCE OE1  CD  
+ACCE O    C   
+IC N    C    *CA  CB   1.4506 106.5700 121.9100 111.6800 1.5538
+IC N    C    *CA  HA   1.4506 106.5700 -116.8200 107.5300 1.0832
+IC N    CA   CB   CG   1.4506 111.4400 180.0000 115.5200 1.5534
+IC CG   CA   *CB  HB2  1.5534 115.5200 120.9300 106.8000 1.1147
+IC CG   CA   *CB  HB3  1.5534 115.5200 -124.5800 109.3400 1.1140
+IC CA   CB   CG   CD   1.5538 115.5200 180.0000 112.5000 1.5320
+IC CD   CB   *CG  HG2  1.5320 112.5000 118.6900 110.4100 1.1112
+IC CD   CB   *CG  HG3  1.5320 112.5000 -121.9100 110.7400 1.1094
+IC CB   CG   CD   OE1  1.5534 112.5000 180.0000 121.5200 1.2294
+IC OE1  CG   *CD  NE2  1.2294 121.5200 179.5700 116.8400 1.3530
+IC CG   CD   NE2  HE21 1.5320 116.8400 -179.7200 116.8600 0.9959
+IC HE21 CD   *NE2 HE22 0.9959 116.8600 -178.9100 119.8300 0.9943
+END
+
+RESI GLU ! GLUTAMIC ACID
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.516300 END !     |
+ATOM H    TYPE=H    CHARGE= 0.293600 END !   H-N
+ATOM CA   TYPE=CT   CHARGE= 0.039700 END !     |   HB2 HG2   OE1
+ATOM HA   TYPE=H1   CHARGE= 0.110500 END !     |   |   |    //
+ATOM CB   TYPE=CT   CHARGE= 0.056000 END !  HA-CA--CB--CG--CD
+ATOM HB2  TYPE=HC   CHARGE=-0.017300 END !     |   |   |    \
+ATOM HB3  TYPE=HC   CHARGE=-0.017300 END !     |   HB3 HG3   OE2(-)
+ATOM CG   TYPE=CT   CHARGE= 0.013600 END !   O=C
+ATOM HG2  TYPE=HC   CHARGE=-0.042500 END !     |
+ATOM HG3  TYPE=HC   CHARGE=-0.042500 END
+ATOM CD   TYPE=C    CHARGE= 0.805400 END
+ATOM OE1  TYPE=O2   CHARGE=-0.818800 END
+ATOM OE2  TYPE=O2   CHARGE=-0.818800 END
+ATOM C    TYPE=C    CHARGE= 0.536600 END
+ATOM O    TYPE=O    CHARGE=-0.581900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   HG2 
+BOND CG   HG3 
+BOND CG   CD  
+BOND CD   OE1 
+BOND CD   OE2 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+IMPR CG   OE1  CD   OE2 
+DONO H    N   
+ACCE OE1  CD  
+ACCE OE2  CD  
+ACCE O    C   
+IC N    C    *CA  CB   1.4512 107.2700 121.9000 111.7100 1.5516
+IC N    C    *CA  HA   1.4512 107.2700 -118.0600 107.2600 1.0828
+IC N    CA   CB   CG   1.4512 111.0400 180.0000 115.6900 1.5557
+IC CG   CA   *CB  HB2  1.5557 115.6900 121.2200 108.1600 1.1145
+IC CG   CA   *CB  HB3  1.5557 115.6900 -123.6500 109.8100 1.1131
+IC CA   CB   CG   CD   1.5516 115.6900 180.0000 115.7300 1.5307
+IC CD   CB   *CG  HG2  1.5307 115.7300 117.3800 109.5000 1.1053
+IC CD   CB   *CG  HG3  1.5307 115.7300 -121.9600 111.0000 1.1081
+IC CB   CG   CD   OE1  1.5557 115.7300 180.0000 114.9900 1.2590
+IC OE1  CG   *CD  OE2  1.2590 114.9900 -179.1000 120.0800 1.2532
+END
+
+RESI GLY ! GLYCINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !     N-H
+ATOM CA   TYPE=CT   CHARGE=-0.025200 END !     |
+ATOM HA2  TYPE=H1   CHARGE= 0.069800 END ! HA2-CA-HA3
+ATOM HA3  TYPE=H1   CHARGE= 0.069800 END !     |
+ATOM C    TYPE=C    CHARGE= 0.597300 END !     C=O
+ATOM O    TYPE=O    CHARGE=-0.567900 END !     |
+BOND N    H   
+BOND N    CA  
+BOND CA   HA2 
+BOND CA   HA3 
+BOND CA   C   
+BOND C    O   
+DIHE O    C    CA   HA2  MULT 3
+DIHE O    C    CA   HA3  MULT 3
+DONO H    N   
+ACCE O    C   
+IC N    C    *CA  HA2  1.4553 108.9400 117.8600 108.0300 1.0814
+IC N    C    *CA  HA3  1.4553 108.9400 -118.1200 107.9500 1.0817
+END
+
+RESI HID ! HISTIDINE DELTAH
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |          HD1    HE1
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N           |     /
+ATOM CA   TYPE=CT   CHARGE= 0.018800 END !     |   HB2    ND1--CE1
+ATOM HA   TYPE=H1   CHARGE= 0.088100 END !     |   |     /      ||
+ATOM CB   TYPE=CT   CHARGE=-0.046200 END !  HA-CA--CB--CG       ||
+ATOM HB2  TYPE=HC   CHARGE= 0.040200 END !     |   |     \\     ||
+ATOM HB3  TYPE=HC   CHARGE= 0.040200 END !     |   HB3    CD2--NE2
+ATOM CG   TYPE=CC   CHARGE=-0.026600 END !   O=C           |
+ATOM ND1  TYPE=NA   CHARGE=-0.381100 END !     |          HD2
+ATOM HD1  TYPE=H    CHARGE= 0.364900 END
+ATOM CE1  TYPE=CR   CHARGE= 0.205700 END
+ATOM HE1  TYPE=H5   CHARGE= 0.139200 END
+ATOM NE2  TYPE=NB   CHARGE=-0.572700 END
+ATOM CD2  TYPE=CV   CHARGE= 0.129200 END
+ATOM HD2  TYPE=H4   CHARGE= 0.114700 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   ND1 
+BOND CG   CD2 
+BOND ND1  HD1 
+BOND ND1  CE1 
+BOND CE1  HE1 
+BOND CE1  NE2 
+BOND NE2  CD2 
+BOND CD2  HD2 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+IMPR CB   CD2  CG   ND1 
+IMPR CG   CE1  ND1  HD1 
+IMPR CG   NE2  CD2  HD2 
+IMPR ND1  NE2  CE1  HE1 
+DONO H    N   
+DONO HD1  ND1 
+ACCE NE2  NONE
+ACCE O    C   
+IC N    C    *CA  CB   1.4521 107.7000 122.4600 109.9900 1.5519
+IC N    C    *CA  HA   1.4521 107.7000 -117.4900 107.3700 1.0830
+IC N    CA   CB   CG   1.4521 112.1200 180.0000 114.0500 1.5041
+IC CG   CA   *CB  HB2  1.5041 114.0500 121.1700 109.0100 1.1118
+IC CG   CA   *CB  HB3  1.5041 114.0500 -122.3600 109.5300 1.1121
+IC CA   CB   CG   ND1  1.5519 114.0500 90.0000 124.1000 1.3783
+IC ND1  CB   *CG  CD2  1.3783 124.1000 -171.2900 129.6000 1.3597
+IC CB   CG   ND1  CE1  1.5041 124.1000 -173.2100 107.0300 1.3549
+IC CB   CG   CD2  NE2  1.5041 129.6000 171.9900 110.0300 1.3817
+IC NE2  ND1  *CE1 HE1  1.3166 111.6300 -179.6300 123.8900 1.0932
+IC CE1  CG   *ND1 HD1  1.3549 107.0300 -174.6500 126.2600 1.0005
+IC NE2  CG   *CD2 HD2  1.3817 110.0300 -177.8500 129.6300 1.0834
+END
+
+RESI HIE ! HISTIDINE EPSILONH
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |                 HE1
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N             __  /
+ATOM CA   TYPE=CT   CHARGE=-0.058100 END !     |   HB2    ND1--CE1
+ATOM HA   TYPE=H1   CHARGE= 0.136000 END !     |   |     /      |
+ATOM CB   TYPE=CT   CHARGE=-0.007400 END !  HA-CA--CB--CG       |
+ATOM HB2  TYPE=HC   CHARGE= 0.036700 END !     |   |     \\     |
+ATOM HB3  TYPE=HC   CHARGE= 0.036700 END !     |   HB3    CD2--NE2
+ATOM CG   TYPE=CC   CHARGE= 0.186800 END !   O=C           |     \
+ATOM ND1  TYPE=NB   CHARGE=-0.543200 END !     |          HD2    HE2
+ATOM CE1  TYPE=CR   CHARGE= 0.163500 END
+ATOM HE1  TYPE=H5   CHARGE= 0.143500 END
+ATOM NE2  TYPE=NA   CHARGE=-0.279500 END
+ATOM HE2  TYPE=H    CHARGE= 0.333900 END
+ATOM CD2  TYPE=CW   CHARGE=-0.220700 END
+ATOM HD2  TYPE=H4   CHARGE= 0.186200 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   ND1 
+BOND CG   CD2 
+BOND ND1  CE1 
+BOND CE1  HE1 
+BOND CE1  NE2 
+BOND NE2  HE2 
+BOND NE2  CD2 
+BOND CD2  HD2 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+IMPR CB   CD2  CG   ND1 
+IMPR CG   NE2  CD2  HD2 
+IMPR ND1  NE2  CE1  HE1 
+IMPR CE1  CD2  NE2  HE2 
+DONO H    N   
+DONO HE2  NE2 
+ACCE ND1  NONE
+ACCE O    C   
+IC N    C    *CA  CB   1.4532 106.4300 123.5200 111.6700 1.5578
+IC N    C    *CA  HA   1.4532 106.4300 -116.4900 107.0800 1.0833
+IC N    CA   CB   CG   1.4532 112.8200 180.0000 116.9400 1.5109
+IC CG   CA   *CB  HB2  1.5109 116.9400 119.8000 107.9100 1.1114
+IC CG   CA   *CB  HB3  1.5109 116.9400 -124.0400 109.5000 1.1101
+IC CA   CB   CG   ND1  1.5578 116.9400 90.0000 120.1700 1.3859
+IC ND1  CB   *CG  CD2  1.3859 120.1700 -178.2600 129.7100 1.3596
+IC CB   CG   ND1  CE1  1.5109 120.1700 -179.2000 105.2000 1.3170
+IC CB   CG   CD2  NE2  1.5109 129.7100 178.6600 105.8000 1.3782
+IC NE2  ND1  *CE1 HE1  1.3539 111.7600 179.6900 124.5800 1.0929
+IC CE1  CD2  *NE2 HE2  1.3539 107.1500 -178.6900 125.8600 0.9996
+IC NE2  CG   *CD2 HD2  1.3782 105.8000 -179.3500 129.8900 1.0809
+END
+
+RESI HIP ! HISTIDINE PLUS
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.347900 END !     |          HD1    HE1
+ATOM H    TYPE=H    CHARGE= 0.274700 END !   H-N           |     /
+ATOM CA   TYPE=CT   CHARGE=-0.135400 END !     |   HB2    ND1--CE1
+ATOM HA   TYPE=H1   CHARGE= 0.121200 END !     |   |     /      ||
+ATOM CB   TYPE=CT   CHARGE=-0.041400 END !  HA-CA--CB--CG       ||
+ATOM HB2  TYPE=HC   CHARGE= 0.081000 END !     |   |     \\     ||
+ATOM HB3  TYPE=HC   CHARGE= 0.081000 END !     |   HB3    CD2--NE2(+)
+ATOM CG   TYPE=CC   CHARGE=-0.001200 END !   O=C           |     \
+ATOM ND1  TYPE=NA   CHARGE=-0.151300 END !     |          HD2    HE2
+ATOM HD1  TYPE=H    CHARGE= 0.386600 END
+ATOM CE1  TYPE=CR   CHARGE=-0.017000 END
+ATOM HE1  TYPE=H5   CHARGE= 0.268100 END
+ATOM NE2  TYPE=NA   CHARGE=-0.171800 END
+ATOM HE2  TYPE=H    CHARGE= 0.391100 END
+ATOM CD2  TYPE=CW   CHARGE=-0.114100 END
+ATOM HD2  TYPE=H4   CHARGE= 0.231700 END
+ATOM C    TYPE=C    CHARGE= 0.734100 END
+ATOM O    TYPE=O    CHARGE=-0.589400 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   ND1 
+BOND CG   CD2 
+BOND ND1  HD1 
+BOND ND1  CE1 
+BOND CE1  HE1 
+BOND CE1  NE2 
+BOND NE2  HE2 
+BOND NE2  CD2 
+BOND CD2  HD2 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+IMPR CB   CD2  CG   ND1 
+IMPR CG   CE1  ND1  HD1 
+IMPR CG   NE2  CD2  HD2 
+IMPR ND1  NE2  CE1  HE1 
+IMPR CE1  CD2  NE2  HE2 
+DONO H    N   
+DONO HD1  ND1 
+DONO HE2  NE2 
+ACCE O    C   
+IC N    C    *CA  CB   1.4548 112.0300 125.1300 109.3800 1.5533
+IC N    C    *CA  HA   1.4548 112.0300 -119.2000 106.7200 1.0832
+IC N    CA   CB   CG   1.4548 112.2500 180.0000 114.1800 1.5168
+IC CG   CA   *CB  HB2  1.5168 114.1800 122.5000 108.9900 1.1116
+IC CG   CA   *CB  HB3  1.5168 114.1800 -121.5100 108.9700 1.1132
+IC CA   CB   CG   ND1  1.5533 114.1800 90.0000 122.9400 1.3718
+IC ND1  CB   *CG  CD2  1.3718 122.9400 -165.2600 128.9300 1.3549
+IC CB   CG   ND1  CE1  1.5168 122.9400 -167.6200 108.9000 1.3262
+IC CB   CG   CD2  NE2  1.5168 128.9300 167.1300 106.9300 1.3727
+IC NE2  ND1  *CE1 HE1  1.3256 108.5000 178.3900 125.7600 1.0799
+IC CE1  CD2  *NE2 HE2  1.3256 108.8200 -172.9400 125.5200 1.0020
+IC CE1  CG   *ND1 HD1  1.3262 108.9000 171.4900 126.0900 1.0018
+IC NE2  CG   *CD2 HD2  1.3727 106.9300 -174.4900 128.4100 1.0867
+END
+
+RESI ILE ! ISOLEUCINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |    HG21 HG22
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N      | /
+ATOM CA   TYPE=CT   CHARGE=-0.059700 END !     |     CG2--HG23
+ATOM HA   TYPE=H1   CHARGE= 0.086900 END !     |    /
+ATOM CB   TYPE=CT   CHARGE= 0.130300 END !  HA-CA--CB-HB    HD11
+ATOM HB   TYPE=HC   CHARGE= 0.018700 END !     |    \       /
+ATOM CG2  TYPE=CT   CHARGE=-0.320400 END !     |     CG1--CD1--HD12
+ATOM HG21 TYPE=HC   CHARGE= 0.088200 END !   O=C    / \     \
+ATOM HG22 TYPE=HC   CHARGE= 0.088200 END !     | HG12 HG13  HD13
+ATOM HG23 TYPE=HC   CHARGE= 0.088200 END
+ATOM CG1  TYPE=CT   CHARGE=-0.043000 END
+ATOM HG12 TYPE=HC   CHARGE= 0.023600 END
+ATOM HG13 TYPE=HC   CHARGE= 0.023600 END
+ATOM CD1  TYPE=CT   CHARGE=-0.066000 END
+ATOM HD11 TYPE=HC   CHARGE= 0.018600 END
+ATOM HD12 TYPE=HC   CHARGE= 0.018600 END
+ATOM HD13 TYPE=HC   CHARGE= 0.018600 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB  
+BOND CB   CG2 
+BOND CB   CG1 
+BOND CG2  HG21
+BOND CG2  HG22
+BOND CG2  HG23
+BOND CG1  HG12
+BOND CG1  HG13
+BOND CG1  CD1 
+BOND CD1  HD11
+BOND CD1  HD12
+BOND CD1  HD13
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DIHE CD1  CG1  CB   CA   MULT 3
+DIHE CD1  CG1  CB   CG2  MULT 3
+DONO H    N   
+ACCE O    C   
+IC N    C    *CA  CB   1.4542 106.3500 124.2200 112.9300 1.5681
+IC N    C    *CA  HA   1.4542 106.3500 -115.6300 106.8100 1.0826
+IC N    CA   CB   CG1  1.4542 112.7900 180.0000 113.6300 1.5498
+IC CG1  CA   *CB  HB   1.5498 113.6300 114.5500 104.4800 1.1195
+IC CG1  CA   *CB  CG2  1.5498 113.6300 -130.0400 113.9300 1.5452
+IC CA   CB   CG2  HG21 1.5681 113.9300 -171.3000 110.6100 1.1100
+IC HG21 CB   *CG2 HG22 1.1100 110.6100 119.3500 110.9000 1.1102
+IC HG21 CB   *CG2 HG23 1.1100 110.6100 -120.0900 110.9700 1.1105
+IC CA   CB   CG1  CD1  1.5681 113.6300 180.0000 114.0900 1.5381
+IC CD1  CB   *CG1 HG12 1.5381 114.0900 122.3600 109.7800 1.1130
+IC CD1  CB   *CG1 HG13 1.5381 114.0900 -120.5900 108.8900 1.1141
+IC CB   CG1  CD1  HD11 1.5498 114.0900 -176.7800 110.3100 1.1115
+IC HD11 CG1  *CD1 HD12 1.1115 110.3100 119.7500 110.6500 1.1113
+IC HD11 CG1  *CD1 HD13 1.1115 110.3100 -119.7000 111.0200 1.1103
+END
+
+RESI LEU ! LEUCINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |        HD11 HD12
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N          | /
+ATOM CA   TYPE=CT   CHARGE=-0.051800 END !     |   HB2   CD1--HD13
+ATOM HA   TYPE=H1   CHARGE= 0.092200 END !     |   |    /
+ATOM CB   TYPE=CT   CHARGE=-0.110200 END !  HA-CA--CB--CG-HG
+ATOM HB2  TYPE=HC   CHARGE= 0.045700 END !     |   |    \
+ATOM HB3  TYPE=HC   CHARGE= 0.045700 END !     |   HB3   CD2--HD23
+ATOM CG   TYPE=CT   CHARGE= 0.353100 END !   O=C          | \
+ATOM HG   TYPE=HC   CHARGE=-0.036100 END !     |        HD21 HD22
+ATOM CD1  TYPE=CT   CHARGE=-0.412100 END
+ATOM HD11 TYPE=HC   CHARGE= 0.100000 END
+ATOM HD12 TYPE=HC   CHARGE= 0.100000 END
+ATOM HD13 TYPE=HC   CHARGE= 0.100000 END
+ATOM CD2  TYPE=CT   CHARGE=-0.412100 END
+ATOM HD21 TYPE=HC   CHARGE= 0.100000 END
+ATOM HD22 TYPE=HC   CHARGE= 0.100000 END
+ATOM HD23 TYPE=HC   CHARGE= 0.100000 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   HG  
+BOND CG   CD1 
+BOND CG   CD2 
+BOND CD1  HD11
+BOND CD1  HD12
+BOND CD1  HD13
+BOND CD2  HD21
+BOND CD2  HD22
+BOND CD2  HD23
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DIHE CD1  CG   CB   CA   MULT 3
+DIHE CD2  CG   CB   CA   MULT 3
+DONO H    N   
+ACCE O    C   
+IC N    C    *CA  CB   1.4508 106.0500 121.5200 112.1200 1.5543
+IC N    C    *CA  HA   1.4508 106.0500 -116.5000 107.5700 1.0824
+IC N    CA   CB   CG   1.4508 111.1900 180.0000 117.4600 1.5472
+IC CG   CA   *CB  HB2  1.5472 117.4600 120.9800 107.1700 1.1145
+IC CG   CA   *CB  HB3  1.5472 117.4600 -124.6700 108.9800 1.1126
+IC CA   CB   CG   CD1  1.5543 117.4600 180.0000 110.4800 1.5361
+IC CD1  CB   *CG  CD2  1.5361 110.4800 120.0000 112.5700 1.5360
+IC CD1  CD2  *CG  HG   1.5361 110.2600 120.0000 108.0200 1.1168
+IC CB   CG   CD1  HD11 1.5472 110.4800 177.3300 110.5400 1.1111
+IC HD11 CG   *CD1 HD12 1.1111 110.5400 119.9600 110.6200 1.1112
+IC HD11 CG   *CD1 HD13 1.1111 110.5400 -119.8500 110.6900 1.1108
+IC CB   CG   CD2  HD21 1.5472 112.5700 178.9600 110.3200 1.1116
+IC HD21 CG   *CD2 HD22 1.1116 110.3200 119.7100 111.6900 1.1086
+IC HD21 CG   *CD2 HD23 1.1116 110.3200 -119.6100 110.4900 1.1115
+END
+
+RESI LYN ! LYSINE neutral
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE=-0.072060 END !     |   HB2 HG2 HD2 HE2    HZ2
+ATOM HA   TYPE=H1   CHARGE= 0.099400 END !     |   |   |   |   |     /
+ATOM CB   TYPE=CT   CHARGE=-0.048450 END !  HA-CA--CB--CG--CD--CE--NZ
+ATOM HB2  TYPE=HC   CHARGE= 0.034000 END !     |   |   |   |   |     \
+ATOM HB3  TYPE=HC   CHARGE= 0.034000 END !     |   HB3 HG3 HD3 HE3    HZ3
+ATOM CG   TYPE=CT   CHARGE= 0.066120 END !   O=C
+ATOM HG2  TYPE=HC   CHARGE= 0.010410 END !     |
+ATOM HG3  TYPE=HC   CHARGE= 0.010410 END
+ATOM CD   TYPE=CT   CHARGE=-0.037680 END
+ATOM HD2  TYPE=HC   CHARGE= 0.011550 END
+ATOM HD3  TYPE=HC   CHARGE= 0.011550 END
+ATOM CE   TYPE=CT   CHARGE= 0.326040 END
+ATOM HE2  TYPE=HP   CHARGE=-0.033580 END
+ATOM HE3  TYPE=HP   CHARGE=-0.033580 END
+ATOM NZ   TYPE=N3   CHARGE=-1.035810 END
+ATOM HZ2  TYPE=H    CHARGE= 0.386040 END
+ATOM HZ3  TYPE=H    CHARGE= 0.386040 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   HG2 
+BOND CG   HG3 
+BOND CG   CD  
+BOND CD   HD2 
+BOND CD   HD3 
+BOND CD   CE  
+BOND CE   HE2 
+BOND CE   HE3 
+BOND CE   NZ  
+BOND NZ   HZ2 
+BOND NZ   HZ3 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DIHE CD   CG   CB   CA   MULT 3
+DIHE CE   CD   CG   CB   MULT 3
+DONO H    N   
+DONO HZ2  NZ  
+DONO HZ3  NZ  
+ACCE O    C   
+IC N    C    *CA  CB   1.4504 107.2900 122.2300 111.3600 1.5568
+IC N    C    *CA  HA   1.4504 107.2900 -116.8800 107.3600 1.0833
+IC N    CA   CB   CG   1.4504 111.4700 180.0000 115.7600 1.5435
+IC CG   CA   *CB  HB2  1.5435 115.7600 120.9000 107.1100 1.1146
+IC CG   CA   *CB  HB3  1.5435 115.7600 -124.4800 108.9900 1.1131
+IC CA   CB   CG   CD   1.5568 115.7600 180.0000 113.2800 1.5397
+IC CD   CB   *CG  HG2  1.5397 113.2800 120.7400 109.1000 1.1138
+IC CD   CB   *CG  HG3  1.5397 113.2800 -122.3400 108.9900 1.1143
+IC CB   CG   CD   CE   1.5435 113.2800 180.0000 112.3300 1.5350
+IC CE   CG   *CD  HD2  1.5350 112.3300 122.2500 108.4100 1.1141
+IC CE   CG   *CD  HD3  1.5350 112.3300 -121.5900 108.1300 1.1146
+IC CG   CD   CE   NZ   1.5397 112.3300 180.0000 110.4600 1.4604
+IC NZ   CD   *CE  HE2  1.4604 110.4600 119.9100 110.5100 1.1128
+IC NZ   CD   *CE  HE3  1.4604 110.4600 -120.0200 110.5700 1.1123
+IC CD   CE   NZ   HZ2  1.5350 110.4600 179.9200 110.0200 1.0404
+IC HZ2  CE   *NZ  HZ3  1.0404 110.0200 120.2700 109.5000 1.0402
+END
+
+RESI LYS ! LYSINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.347900 END !     |
+ATOM H    TYPE=H    CHARGE= 0.274700 END !   H-N
+ATOM CA   TYPE=CT   CHARGE=-0.240000 END !     |   HB2 HG2 HD2 HE2    HZ1
+ATOM HA   TYPE=H1   CHARGE= 0.142600 END !     |   |   |   |   |     /
+ATOM CB   TYPE=CT   CHARGE=-0.009400 END !  HA-CA--CB--CG--CD--CE--NZ--HZ2
+ATOM HB2  TYPE=HC   CHARGE= 0.036200 END !     |   |   |   |   |  (+)\
+ATOM HB3  TYPE=HC   CHARGE= 0.036200 END !     |   HB3 HG3 HD3 HE3    HZ3
+ATOM CG   TYPE=CT   CHARGE= 0.018700 END !   O=C
+ATOM HG2  TYPE=HC   CHARGE= 0.010300 END !     |
+ATOM HG3  TYPE=HC   CHARGE= 0.010300 END
+ATOM CD   TYPE=CT   CHARGE=-0.047900 END
+ATOM HD2  TYPE=HC   CHARGE= 0.062100 END
+ATOM HD3  TYPE=HC   CHARGE= 0.062100 END
+ATOM CE   TYPE=CT   CHARGE=-0.014300 END
+ATOM HE2  TYPE=HP   CHARGE= 0.113500 END
+ATOM HE3  TYPE=HP   CHARGE= 0.113500 END
+ATOM NZ   TYPE=N3   CHARGE=-0.385400 END
+ATOM HZ1  TYPE=H    CHARGE= 0.340000 END
+ATOM HZ2  TYPE=H    CHARGE= 0.340000 END
+ATOM HZ3  TYPE=H    CHARGE= 0.340000 END
+ATOM C    TYPE=C    CHARGE= 0.734100 END
+ATOM O    TYPE=O    CHARGE=-0.589400 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   HG2 
+BOND CG   HG3 
+BOND CG   CD  
+BOND CD   HD2 
+BOND CD   HD3 
+BOND CD   CE  
+BOND CE   HE2 
+BOND CE   HE3 
+BOND CE   NZ  
+BOND NZ   HZ1 
+BOND NZ   HZ2 
+BOND NZ   HZ3 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DIHE CD   CG   CB   CA   MULT 3
+DIHE CE   CD   CG   CB   MULT 3
+DONO H    N   
+DONO HZ1  NZ  
+DONO HZ2  NZ  
+DONO HZ3  NZ  
+ACCE O    C   
+IC N    C    *CA  CB   1.4504 107.2900 122.2300 111.3600 1.5568
+IC N    C    *CA  HA   1.4504 107.2900 -116.8800 107.3600 1.0833
+IC N    CA   CB   CG   1.4504 111.4700 180.0000 115.7600 1.5435
+IC CG   CA   *CB  HB2  1.5435 115.7600 120.9000 107.1100 1.1146
+IC CG   CA   *CB  HB3  1.5435 115.7600 -124.4800 108.9900 1.1131
+IC CA   CB   CG   CD   1.5568 115.7600 180.0000 113.2800 1.5397
+IC CD   CB   *CG  HG2  1.5397 113.2800 120.7400 109.1000 1.1138
+IC CD   CB   *CG  HG3  1.5397 113.2800 -122.3400 108.9900 1.1143
+IC CB   CG   CD   CE   1.5435 113.2800 180.0000 112.3300 1.5350
+IC CE   CG   *CD  HD2  1.5350 112.3300 122.2500 108.4100 1.1141
+IC CE   CG   *CD  HD3  1.5350 112.3300 -121.5900 108.1300 1.1146
+IC CG   CD   CE   NZ   1.5397 112.3300 180.0000 110.4600 1.4604
+IC NZ   CD   *CE  HE2  1.4604 110.4600 119.9100 110.5100 1.1128
+IC NZ   CD   *CE  HE3  1.4604 110.4600 -120.0200 110.5700 1.1123
+IC CD   CE   NZ   HZ1  1.5350 110.4600 179.9200 110.0200 1.0404
+IC HZ1  CE   *NZ  HZ2  1.0404 110.0200 120.2700 109.5000 1.0402
+IC HZ1  CE   *NZ  HZ3  1.0404 110.0200 -120.1300 109.4000 1.0401
+END
+
+RESI MET ! METHIONINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE=-0.023700 END !     |   HB2 HG2     HE1
+ATOM HA   TYPE=H1   CHARGE= 0.088000 END !     |   |   |       |
+ATOM CB   TYPE=CT   CHARGE= 0.034200 END !  HA-CA--CB--CG--SD--CE--HE3
+ATOM HB2  TYPE=HC   CHARGE= 0.024100 END !     |   |   |       |
+ATOM HB3  TYPE=HC   CHARGE= 0.024100 END !     |   HB3 HG3     HE2
+ATOM CG   TYPE=CT   CHARGE= 0.001800 END !   O=C
+ATOM HG2  TYPE=H1   CHARGE= 0.044000 END !     |
+ATOM HG3  TYPE=H1   CHARGE= 0.044000 END
+ATOM SD   TYPE=S    CHARGE=-0.273700 END
+ATOM CE   TYPE=CT   CHARGE=-0.053600 END
+ATOM HE1  TYPE=H1   CHARGE= 0.068400 END
+ATOM HE2  TYPE=H1   CHARGE= 0.068400 END
+ATOM HE3  TYPE=H1   CHARGE= 0.068400 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   HG2 
+BOND CG   HG3 
+BOND CG   SD  
+BOND SD   CE  
+BOND CE   HE1 
+BOND CE   HE2 
+BOND CE   HE3 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DONO H    N   
+ACCE O    C   
+IC N    C    *CA  CB   1.4510 106.3100 121.6200 111.8800 1.5546
+IC N    C    *CA  HA   1.4510 106.3100 -116.9800 107.5700 1.0832
+IC N    CA   CB   CG   1.4510 111.2500 180.0000 115.9200 1.5460
+IC CG   CA   *CB  HB2  1.5460 115.9200 120.5600 106.9000 1.1153
+IC CG   CA   *CB  HB3  1.5460 115.9200 -124.8000 109.3800 1.1129
+IC CA   CB   CG   SD   1.5546 115.9200 180.0000 110.2800 1.8219
+IC SD   CB   *CG  HG2  1.8219 110.2800 120.5000 110.3400 1.1106
+IC SD   CB   *CG  HG3  1.8219 110.2800 -121.1600 109.6400 1.1119
+IC CB   CG   SD   CE   1.5460 110.2800 180.0000 98.9400 1.8206
+IC CG   SD   CE   HE1  1.8219 98.9400 -179.4200 110.9100 1.1111
+IC HE1  SD   *CE  HE2  1.1111 110.9100 119.9500 111.0300 1.1115
+IC HE1  SD   *CE  HE3  1.1111 110.9100 -119.9500 111.0900 1.1112
+END
+
+RESI PHE ! PHENYLALANINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |        HD1  HE1
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N         |    |
+ATOM CA   TYPE=CT   CHARGE=-0.002400 END !     |   HB2  CD1--CE1
+ATOM HA   TYPE=H1   CHARGE= 0.097800 END !     |   |    //     \\
+ATOM CB   TYPE=CT   CHARGE=-0.034300 END !  HA-CA--CB--CG      CZ--HZ
+ATOM HB2  TYPE=HC   CHARGE= 0.029500 END !     |   |    \  __  /
+ATOM HB3  TYPE=HC   CHARGE= 0.029500 END !     |   HB3  CD2--CE2
+ATOM CG   TYPE=CA   CHARGE= 0.011800 END !   O=C         |    |
+ATOM CD1  TYPE=CA   CHARGE=-0.125600 END !     |        HD2  HE2
+ATOM HD1  TYPE=HA   CHARGE= 0.133000 END
+ATOM CE1  TYPE=CA   CHARGE=-0.170400 END
+ATOM HE1  TYPE=HA   CHARGE= 0.143000 END
+ATOM CZ   TYPE=CA   CHARGE=-0.107200 END
+ATOM HZ   TYPE=HA   CHARGE= 0.129700 END
+ATOM CE2  TYPE=CA   CHARGE=-0.170400 END
+ATOM HE2  TYPE=HA   CHARGE= 0.143000 END
+ATOM CD2  TYPE=CA   CHARGE=-0.125600 END
+ATOM HD2  TYPE=HA   CHARGE= 0.133000 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   CD1 
+BOND CG   CD2 
+BOND CD1  HD1 
+BOND CD1  CE1 
+BOND CE1  HE1 
+BOND CE1  CZ  
+BOND CZ   HZ  
+BOND CZ   CE2 
+BOND CE2  HE2 
+BOND CE2  CD2 
+BOND CD2  HD2 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+IMPR CD1  CD2  CG   CB  
+IMPR CG   CE1  CD1  HD1 
+IMPR CG   CE2  CD2  HD2 
+IMPR CD1  CZ   CE1  HE1 
+IMPR CE1  CE2  CZ   HZ  
+IMPR CZ   CD2  CE2  HE2 
+DONO H    N   
+ACCE O    C   
+IC N    C    *CA  CB   1.4504 106.3800 122.4900 112.4500 1.5594
+IC N    C    *CA  HA   1.4504 106.3800 -115.6300 107.0500 1.0832
+IC N    CA   CB   CG   1.4504 111.6300 180.0000 112.7600 1.5109
+IC CG   CA   *CB  HB2  1.5109 112.7600 118.2700 109.1000 1.1119
+IC CG   CA   *CB  HB3  1.5109 112.7600 -123.8300 111.1100 1.1113
+IC CA   CB   CG   CD1  1.5594 112.7600 90.0000 120.3200 1.4059
+IC CD1  CB   *CG  CD2  1.4059 120.3200 -177.9600 120.7600 1.4062
+IC CB   CG   CD1  CE1  1.5109 120.3200 -177.3700 120.6300 1.4006
+IC CE1  CG   *CD1 HD1  1.4006 120.6300 179.7000 119.6500 1.0814
+IC CB   CG   CD2  CE2  1.5109 120.7600 177.2000 120.6200 1.4002
+IC CE2  CG   *CD2 HD2  1.4002 120.6200 -178.6900 119.9900 1.0811
+IC CG   CD1  CE1  CZ   1.4059 120.6300 -0.1200 119.9300 1.4004
+IC CZ   CD1  *CE1 HE1  1.4004 119.9300 -179.6900 120.0100 1.0808
+IC CZ   CD2  *CE2 HE2  1.4000 119.9600 -179.9300 119.8700 1.0811
+IC CE1  CE2  *CZ  HZ   1.4004 119.9800 179.5100 119.9700 1.0807
+END
+
+RESI PRO ! PROLINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.254800 END !       HD2 HD3
+ATOM CD   TYPE=CT   CHARGE= 0.019200 END !     |   \ /
+ATOM HD2  TYPE=H1   CHARGE= 0.039100 END !     N---CD   HG2
+ATOM HD3  TYPE=H1   CHARGE= 0.039100 END !     |     \  /
+ATOM CG   TYPE=CT   CHARGE= 0.018900 END !     |      CG
+ATOM HG2  TYPE=HC   CHARGE= 0.021300 END !     |     /  \
+ATOM HG3  TYPE=HC   CHARGE= 0.021300 END !  HA-CA--CB   HG3
+ATOM CB   TYPE=CT   CHARGE=-0.007000 END !     |   / \
+ATOM HB2  TYPE=HC   CHARGE= 0.025300 END !     | HB2 HB3
+ATOM HB3  TYPE=HC   CHARGE= 0.025300 END !   O=C
+ATOM CA   TYPE=CT   CHARGE=-0.026600 END !     |
+ATOM HA   TYPE=H1   CHARGE= 0.064100 END
+ATOM C    TYPE=C    CHARGE= 0.589600 END
+ATOM O    TYPE=O    CHARGE=-0.574800 END
+BOND N    CD  
+BOND N    CA  
+BOND CD   HD2 
+BOND CD   HD3 
+BOND CD   CG  
+BOND CG   HG2 
+BOND CG   HG3 
+BOND CG   CB  
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CA  
+BOND CA   HA  
+BOND CA   C   
+BOND C    O   
+DIHE CA   CB   CG   CD   MULT 3
+DIHE O    C    CA   HA   MULT 3
+ACCE O    C   
+IC N    C    *CA  CB   1.4585 110.8600 113.7400 111.7400 1.5399
+IC N    C    *CA  HA   1.4585 110.8600 -122.4000 109.0900 1.0837
+IC N    CA   CB   CG   1.4585 102.5600 31.6100 104.3900 1.5322
+IC CA   CB   CG   CD   1.5399 104.3900 -34.5900 103.2100 1.5317
+IC N    CA   CB   HB2  1.4585 102.5600 -84.9400 109.0200 1.1131
+IC N    CA   CB   HB3  1.4585 102.5600 153.9300 112.7400 1.1088
+IC CA   CB   CG   HG2  1.5399 104.3900 -156.7200 112.9500 1.1077
+IC CA   CB   CG   HG3  1.5399 104.3900 81.2600 109.2200 1.1143
+IC CB   CG   CD   HD2  1.5322 103.2100 -93.5500 110.0300 1.1137
+IC CB   CG   CD   HD3  1.5322 103.2100 144.5200 110.0000 1.1144
+END
+
+RESI SER ! SERINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE=-0.024900 END !     |   HB2
+ATOM HA   TYPE=H1   CHARGE= 0.084300 END !     |   |
+ATOM CB   TYPE=CT   CHARGE= 0.211700 END !  HA-CA--CB--OG
+ATOM HB2  TYPE=H1   CHARGE= 0.035200 END !     |   |     \
+ATOM HB3  TYPE=H1   CHARGE= 0.035200 END !     |   HB3    HG
+ATOM OG   TYPE=OH   CHARGE=-0.654600 END !   O=C
+ATOM HG   TYPE=HO   CHARGE= 0.427500 END !     |
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   OG  
+BOND OG   HG  
+BOND C    O   
+DIHE OG   CB   CA   HA   MULT 2
+DIHE O    C    CA   HA   MULT 3
+DIHE HG   OG   CB   CA   MULT 2
+DONO H    N   
+DONO HG   OG  
+ACCE OG   NONE
+ACCE O    C   
+IC N    C    *CA  CB   1.4579 105.8100 124.7500 111.4000 1.5585
+IC N    C    *CA  HA   1.4579 105.8100 -115.5600 107.3000 1.0821
+IC N    CA   CB   OG   1.4579 114.2800 180.0000 112.4500 1.4341
+IC OG   CA   *CB  HB2  1.4341 112.4500 119.3200 108.1000 1.1140
+IC OG   CA   *CB  HB3  1.4341 112.4500 -123.8600 110.3800 1.1136
+IC CA   CB   OG   HG   1.5585 112.4500 165.9600 107.0800 0.9655
+END
+
+RESI THR ! THREONINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N
+ATOM CA   TYPE=CT   CHARGE=-0.038900 END !     |     OG1--HG1
+ATOM HA   TYPE=H1   CHARGE= 0.100700 END !     |    /
+ATOM CB   TYPE=CT   CHARGE= 0.365400 END !  HA-CA--CB-HB
+ATOM HB   TYPE=H1   CHARGE= 0.004300 END !     |    \
+ATOM CG2  TYPE=CT   CHARGE=-0.243800 END !     |     CG2--HG23
+ATOM HG21 TYPE=HC   CHARGE= 0.064200 END !   O=C    / \
+ATOM HG22 TYPE=HC   CHARGE= 0.064200 END !     | HG21 HG22
+ATOM HG23 TYPE=HC   CHARGE= 0.064200 END
+ATOM OG1  TYPE=OH   CHARGE=-0.676100 END
+ATOM HG1  TYPE=HO   CHARGE= 0.410200 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB  
+BOND CB   CG2 
+BOND CB   OG1 
+BOND CG2  HG21
+BOND CG2  HG22
+BOND CG2  HG23
+BOND OG1  HG1 
+BOND C    O   
+DIHE OG1  CB   CA   HA   MULT 2
+DIHE O    C    CA   HA   MULT 3
+DIHE HG21 CG2  CB   OG1  MULT 2
+DIHE HG22 CG2  CB   OG1  MULT 2
+DIHE HG23 CG2  CB   OG1  MULT 2
+DIHE HG1  OG1  CB   CA   MULT 2
+DIHE HG1  OG1  CB   CG2  MULT 2
+DONO H    N   
+DONO HG1  OG1 
+ACCE OG1  NONE
+ACCE O    C   
+IC N    C    *CA  CB   1.4607 106.0900 126.4600 112.7400 1.5693
+IC N    C    *CA  HA   1.4607 106.0900 -114.9200 106.5300 1.0817
+IC N    CA   CB   OG1  1.4607 114.8100 180.0000 112.1600 1.4252
+IC OG1  CA   *CB  HB   1.4252 112.1600 116.3900 106.1100 1.1174
+IC OG1  CA   *CB  CG2  1.4252 112.1600 -124.1300 115.9100 1.5324
+IC CA   CB   OG1  HG1  1.5693 112.1600 -179.2800 105.4500 0.9633
+IC CA   CB   CG2  HG21 1.5693 115.9100 -173.6500 110.8500 1.1104
+IC HG21 CB   *CG2 HG22 1.1104 110.8500 119.5100 110.4100 1.1109
+IC HG21 CB   *CG2 HG23 1.1104 110.8500 -120.3900 111.1100 1.1113
+END
+
+RESI TRP ! TRYPTOPHAN
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |                  HE3
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N                   |
+ATOM CA   TYPE=CT   CHARGE=-0.027500 END !     |   HB2            CE3
+ATOM HA   TYPE=H1   CHARGE= 0.112300 END !     |   |             /  \\
+ATOM CB   TYPE=CT   CHARGE=-0.005000 END !  HA-CA--CB---CG-----CD2   CZ3-HZ3
+ATOM HB2  TYPE=HC   CHARGE= 0.033900 END !     |   |    ||     ||     |
+ATOM HB3  TYPE=HC   CHARGE= 0.033900 END !     |   HB3  CD1    CE2   CH2-HH2
+ATOM CG   TYPE=C*   CHARGE=-0.141500 END !   O=C       /   \   / \  //
+ATOM CD1  TYPE=CW   CHARGE=-0.163800 END !     |     HD1    NE1   CZ2
+ATOM HD1  TYPE=H4   CHARGE= 0.206200 END !                   |     |
+ATOM NE1  TYPE=NA   CHARGE=-0.341800 END !                  HE1   HZ2
+ATOM HE1  TYPE=H    CHARGE= 0.341200 END
+ATOM CE2  TYPE=CN   CHARGE= 0.138000 END
+ATOM CZ2  TYPE=CA   CHARGE=-0.260100 END
+ATOM HZ2  TYPE=HA   CHARGE= 0.157200 END
+ATOM CH2  TYPE=CA   CHARGE=-0.113400 END
+ATOM HH2  TYPE=HA   CHARGE= 0.141700 END
+ATOM CZ3  TYPE=CA   CHARGE=-0.197200 END
+ATOM HZ3  TYPE=HA   CHARGE= 0.144700 END
+ATOM CE3  TYPE=CA   CHARGE=-0.238700 END
+ATOM HE3  TYPE=HA   CHARGE= 0.170000 END
+ATOM CD2  TYPE=CB   CHARGE= 0.124300 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   CD1 
+BOND CG   CD2 
+BOND CD1  HD1 
+BOND CD1  NE1 
+BOND NE1  HE1 
+BOND NE1  CE2 
+BOND CE2  CZ2 
+BOND CE2  CD2 
+BOND CZ2  HZ2 
+BOND CZ2  CH2 
+BOND CH2  HH2 
+BOND CH2  CZ3 
+BOND CZ3  HZ3 
+BOND CZ3  CE3 
+BOND CE3  HE3 
+BOND CE3  CD2 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+IMPR CD2  CB   CG   CD1 
+IMPR CG   NE1  CD1  HD1 
+IMPR CD1  CE2  NE1  HE1 
+IMPR CE2  CH2  CZ2  HZ2 
+IMPR CZ2  CZ3  CH2  HH2 
+IMPR CH2  CE3  CZ3  HZ3 
+IMPR CZ3  CD2  CE3  HE3 
+DONO H    N   
+DONO HE1  NE1 
+ACCE O    C   
+IC N    C    *CA  CB   1.4507 107.6900 122.6800 111.2300 1.5560
+IC N    C    *CA  HA   1.4507 107.6900 -117.0200 106.9200 1.0835
+IC N    CA   CB   CG   1.4507 111.6800 180.0000 115.1400 1.5233
+IC CG   CA   *CB  HB2  1.5233 115.1400 119.1700 107.8400 1.1127
+IC CG   CA   *CB  HB3  1.5233 115.1400 -124.7300 109.8700 1.1118
+IC CA   CB   CG   CD2  1.5560 115.1400 90.0000 123.9500 1.4407
+IC CD2  CB   *CG  CD1  1.4407 123.9500 -172.8100 129.1800 1.3679
+IC CD1  CG   CD2  CE2  1.3679 106.5700 -0.0800 106.6500 1.4126
+IC CG   CD2  CE2  NE1  1.4407 106.6500 0.1400 107.8700 1.3746
+IC CE2  CG   *CD2 CE3  1.4126 106.6500 179.2100 132.5400 1.4011
+IC CE2  CD2  CE3  CZ3  1.4126 120.8000 -0.2000 118.1600 1.4017
+IC CD2  CE3  CZ3  CH2  1.4011 118.1600 0.1000 120.9700 1.4019
+IC CE3  CZ3  CH2  CZ2  1.4017 120.9700 0.0100 120.8700 1.4030
+IC CZ3  CD2  *CE3 HE3  1.4017 118.1600 -179.6200 121.8400 1.0815
+IC CH2  CE3  *CZ3 HZ3  1.4019 120.9700 -179.8200 119.4500 1.0811
+IC CZ2  CZ3  *CH2 HH2  1.4030 120.8700 -179.9200 119.5700 1.0811
+IC CE2  CH2  *CZ2 HZ2  1.3939 118.4200 179.8700 120.0800 1.0790
+IC CD1  CE2  *NE1 HE1  1.3752 108.8100 177.7800 124.6800 0.9767
+IC CG   NE1  *CD1 HD1  1.3679 110.1000 178.1000 125.4300 1.0820
+END
+
+RESI TYR ! TYROSINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |        HD1  HE1
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N         |    |
+ATOM CA   TYPE=CT   CHARGE=-0.001400 END !     |   HB2  CD1--CE1
+ATOM HA   TYPE=H1   CHARGE= 0.087600 END !     |   |   //      \\
+ATOM CB   TYPE=CT   CHARGE=-0.015200 END !  HA-CA--CB--CG      CZ--OH
+ATOM HB2  TYPE=HC   CHARGE= 0.029500 END !     |   |    \  __  /     \
+ATOM HB3  TYPE=HC   CHARGE= 0.029500 END !     |   HB3  CD2--CE2     HH
+ATOM CG   TYPE=CA   CHARGE=-0.001100 END !   O=C         |    |
+ATOM CD1  TYPE=CA   CHARGE=-0.190600 END !     |        HD2  HE2
+ATOM HD1  TYPE=HA   CHARGE= 0.169900 END
+ATOM CE1  TYPE=CA   CHARGE=-0.234100 END
+ATOM HE1  TYPE=HA   CHARGE= 0.165600 END
+ATOM CZ   TYPE=C    CHARGE= 0.322600 END
+ATOM OH   TYPE=OH   CHARGE=-0.557900 END
+ATOM HH   TYPE=HO   CHARGE= 0.399200 END
+ATOM CE2  TYPE=CA   CHARGE=-0.234100 END
+ATOM HE2  TYPE=HA   CHARGE= 0.165600 END
+ATOM CD2  TYPE=CA   CHARGE=-0.190600 END
+ATOM HD2  TYPE=HA   CHARGE= 0.169900 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB2 
+BOND CB   HB3 
+BOND CB   CG  
+BOND CG   CD1 
+BOND CG   CD2 
+BOND CD1  HD1 
+BOND CD1  CE1 
+BOND CE1  HE1 
+BOND CE1  CZ  
+BOND CZ   OH  
+BOND CZ   CE2 
+BOND OH   HH  
+BOND CE2  HE2 
+BOND CE2  CD2 
+BOND CD2  HD2 
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+IMPR CD1  CD2  CG   CB  
+IMPR CG   CE1  CD1  HD1 
+IMPR CG   CE2  CD2  HD2 
+IMPR CD1  CZ   CE1  HE1 
+IMPR CE1  CE2  CZ   OH  
+IMPR CZ   CD2  CE2  HE2 
+DONO H    N   
+DONO HH   OH  
+ACCE OH   NONE
+ACCE O    C   
+IC N    C    *CA  CB   1.4501 106.5200 122.2700 112.3400 1.5606
+IC N    C    *CA  HA   1.4501 106.5200 -116.0400 107.1500 1.0833
+IC N    CA   CB   CG   1.4501 111.4300 180.0000 112.9400 1.5113
+IC CG   CA   *CB  HB2  1.5113 112.9400 118.8900 109.1200 1.1119
+IC CG   CA   *CB  HB3  1.5113 112.9400 -123.3600 110.7000 1.1115
+IC CA   CB   CG   CD1  1.5606 112.9400 90.0000 120.4900 1.4064
+IC CD1  CB   *CG  CD2  1.4064 120.4900 -176.4600 120.4600 1.4068
+IC CB   CG   CD1  CE1  1.5113 120.4900 -175.4900 120.4000 1.4026
+IC CE1  CG   *CD1 HD1  1.4026 120.4000 178.9400 119.8000 1.0814
+IC CB   CG   CD2  CE2  1.5113 120.4600 175.3200 120.5600 1.4022
+IC CE2  CG   *CD2 HD2  1.4022 120.5600 -177.5700 119.9800 1.0813
+IC CG   CD1  CE1  CZ   1.4064 120.4000 -0.1900 120.0900 1.3978
+IC CZ   CD1  *CE1 HE1  1.3978 120.0900 179.6400 120.5800 1.0799
+IC CZ   CD2  *CE2 HE2  1.3979 119.9200 -178.6900 119.7600 1.0798
+IC CE1  CE2  *CZ  OH   1.3978 120.0500 -178.9800 120.2500 1.4063
+IC CE1  CZ   OH   HH   1.3978 119.6800 175.4500 107.4700 0.9594
+END
+
+RESI VAL ! VALINE
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !     |    HG11 HG12
+ATOM H    TYPE=H    CHARGE= 0.271900 END !   H-N      | /
+ATOM CA   TYPE=CT   CHARGE=-0.087500 END !     |     CG1--HG13
+ATOM HA   TYPE=H1   CHARGE= 0.096900 END !     |    /
+ATOM CB   TYPE=CT   CHARGE= 0.298500 END !  HA-CA--CB-HB
+ATOM HB   TYPE=HC   CHARGE=-0.029700 END !     |    \
+ATOM CG1  TYPE=CT   CHARGE=-0.319200 END !     |     CG2--HG23
+ATOM HG11 TYPE=HC   CHARGE= 0.079100 END !   O=C    / \
+ATOM HG12 TYPE=HC   CHARGE= 0.079100 END !     | HG21 HG22
+ATOM HG13 TYPE=HC   CHARGE= 0.079100 END
+ATOM CG2  TYPE=CT   CHARGE=-0.319200 END
+ATOM HG21 TYPE=HC   CHARGE= 0.079100 END
+ATOM HG22 TYPE=HC   CHARGE= 0.079100 END
+ATOM HG23 TYPE=HC   CHARGE= 0.079100 END
+ATOM C    TYPE=C    CHARGE= 0.597300 END
+ATOM O    TYPE=O    CHARGE=-0.567900 END
+BOND N    H   
+BOND N    CA  
+BOND CA   HA  
+BOND CA   CB  
+BOND CA   C   
+BOND CB   HB  
+BOND CB   CG1 
+BOND CB   CG2 
+BOND CG1  HG11
+BOND CG1  HG12
+BOND CG1  HG13
+BOND CG2  HG21
+BOND CG2  HG22
+BOND CG2  HG23
+BOND C    O   
+DIHE O    C    CA   HA   MULT 3
+DONO H    N   
+ACCE O    C   
+IC N    C    *CA  CB   1.4570 105.5400 122.9500 111.2300 1.5660
+IC N    C    *CA  HA   1.4570 105.5400 -117.2400 107.4600 1.0828
+IC N    CA   CB   CG1  1.4570 113.0500 180.0000 113.9700 1.5441
+IC CG1  CA   *CB  CG2  1.5441 113.9700 123.9900 112.1700 1.5414
+IC CG1  CA   *CB  HB   1.5441 113.9700 -119.1700 107.5700 1.1178
+IC CA   CB   CG1  HG11 1.5660 113.9700 177.8300 110.3000 1.1114
+IC HG11 CB   *CG1 HG12 1.1114 110.3000 119.2500 111.6700 1.1097
+IC HG11 CB   *CG1 HG13 1.1114 110.3000 -119.4900 110.7000 1.1110
+IC CA   CB   CG2  HG21 1.5660 112.1700 -177.7800 110.7100 1.1108
+IC HG21 CB   *CG2 HG22 1.1108 110.7100 120.0800 110.5600 1.1115
+IC HG21 CB   *CG2 HG23 1.1108 110.7100 -119.5500 111.2300 1.1098
+END
+
+RESI ACE ! ACE BEGINNING GROUP
+GROUP
+ATOM HH31 TYPE=HC   CHARGE= 0.112300 END !      HH32
+ATOM CH3  TYPE=CT   CHARGE=-0.366200 END !      |
+ATOM HH32 TYPE=HC   CHARGE= 0.112300 END ! HH31-CH3-HH33
+ATOM HH33 TYPE=HC   CHARGE= 0.112300 END !      |
+ATOM C    TYPE=C    CHARGE= 0.597200 END !    O=C
+ATOM O    TYPE=O    CHARGE=-0.567900 END !      |
+BOND HH31 CH3 
+BOND CH3  HH32
+BOND CH3  HH33
+BOND CH3  C   
+BOND C    O   
+DIHE O    C    CH3  HH31 MULT 3
+DIHE O    C    CH3  HH32 MULT 3
+DIHE O    C    CH3  HH33 MULT 3
+ACCE O    C   
+IC O    C    CH3  HH31 0.0000 0.0000 180.0000 0.0000 0.0000
+IC O    C    CH3  HH32 0.0000 0.0000 60.0000 0.0000 0.0000
+IC O    C    CH3  HH33 0.0000 0.0000 -60.0000 0.0000 0.0000
+END
+
+RESI NHE ! NH2 ENDING GROUP
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.463000 END !      |
+ATOM HN1  TYPE=H    CHARGE= 0.231500 END !      N
+ATOM HN2  TYPE=H    CHARGE= 0.231500 END !  HN1/ \HN2
+BOND N    HN1 
+BOND N    HN2 
+DONO HN1  N   
+DONO HN2  N   
+END
+
+RESI NME ! N-methyl all atom
+GROUP
+ATOM N    TYPE=N    CHARGE=-0.415700 END !      |
+ATOM H    TYPE=H    CHARGE= 0.271900 END !    H-N
+ATOM CH3  TYPE=CT   CHARGE=-0.149000 END !      |
+ATOM HH31 TYPE=H1   CHARGE= 0.097600 END ! HH31-CH3-HH33
+ATOM HH32 TYPE=H1   CHARGE= 0.097600 END !      |
+ATOM HH33 TYPE=H1   CHARGE= 0.097600 END !      HH32
+BOND N    H   
+BOND N    CH3 
+BOND CH3  HH31
+BOND CH3  HH32
+BOND CH3  HH33
+DONO H    N   
+END
+
+PRES NALA ! ALANINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.141400 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.199700 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.199700 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.199700 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.096200 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.088900 END
+MODI ATOM +CB   TYPE=CT   CHARGE=-0.059700 END
+MODI ATOM +HB1  TYPE=HC   CHARGE= 0.030000 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.030000 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.030000 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.616300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.572200 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NARG ! ARGININE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.130500 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.208300 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.208300 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.208300 END
+MODI ATOM +CA   TYPE=CT   CHARGE=-0.022300 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.124200 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.011800 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.022600 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.022600 END
+MODI ATOM +CG   TYPE=CT   CHARGE= 0.023600 END
+MODI ATOM +HG2  TYPE=HC   CHARGE= 0.030900 END
+MODI ATOM +HG3  TYPE=HC   CHARGE= 0.030900 END
+MODI ATOM +CD   TYPE=CT   CHARGE= 0.093500 END
+MODI ATOM +HD2  TYPE=H1   CHARGE= 0.052700 END
+MODI ATOM +HD3  TYPE=H1   CHARGE= 0.052700 END
+MODI ATOM +NE   TYPE=N2   CHARGE=-0.565000 END
+MODI ATOM +HE   TYPE=H    CHARGE= 0.359200 END
+MODI ATOM +CZ   TYPE=CA   CHARGE= 0.828100 END
+MODI ATOM +NH1  TYPE=N2   CHARGE=-0.869300 END
+MODI ATOM +HH11 TYPE=H    CHARGE= 0.449400 END
+MODI ATOM +HH12 TYPE=H    CHARGE= 0.449400 END
+MODI ATOM +NH2  TYPE=N2   CHARGE=-0.869300 END
+MODI ATOM +HH21 TYPE=H    CHARGE= 0.449400 END
+MODI ATOM +HH22 TYPE=H    CHARGE= 0.449400 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.721400 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.601300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NASN ! ASPARAGINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.180100 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.192100 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.192100 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.192100 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.036800 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.123100 END
+MODI ATOM +CB   TYPE=CT   CHARGE=-0.028300 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.051500 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.051500 END
+MODI ATOM +CG   TYPE=C    CHARGE= 0.583300 END
+MODI ATOM +OD1  TYPE=O    CHARGE=-0.574400 END
+MODI ATOM +ND2  TYPE=N    CHARGE=-0.863400 END
+MODI ATOM +HD21 TYPE=H    CHARGE= 0.409700 END
+MODI ATOM +HD22 TYPE=H    CHARGE= 0.409700 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.616300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.572200 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NASP ! ASPARTIC ACID - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.078200 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.220000 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.220000 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.220000 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.029200 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.114100 END
+MODI ATOM +CB   TYPE=CT   CHARGE=-0.023500 END
+MODI ATOM +HB2  TYPE=HC   CHARGE=-0.016900 END
+MODI ATOM +HB3  TYPE=HC   CHARGE=-0.016900 END
+MODI ATOM +CG   TYPE=C    CHARGE= 0.819400 END
+MODI ATOM +OD1  TYPE=O2   CHARGE=-0.808400 END
+MODI ATOM +OD2  TYPE=O2   CHARGE=-0.808400 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.562100 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.588900 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NCYS ! CYSTEINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.132500 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.202300 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.202300 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.202300 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.092700 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.141100 END
+MODI ATOM +CB   TYPE=CT   CHARGE=-0.119500 END
+MODI ATOM +HB2  TYPE=H1   CHARGE= 0.118800 END
+MODI ATOM +HB3  TYPE=H1   CHARGE= 0.118800 END
+MODI ATOM +SG   TYPE=SH   CHARGE=-0.329800 END
+MODI ATOM +HG   TYPE=HS   CHARGE= 0.197500 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NCYX ! CYSTEINE (S-S BRIDGE) - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.206900 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.181500 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.181500 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.181500 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.105500 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.092200 END
+MODI ATOM +CB   TYPE=CT   CHARGE=-0.027700 END
+MODI ATOM +HB2  TYPE=H1   CHARGE= 0.068000 END
+MODI ATOM +HB3  TYPE=H1   CHARGE= 0.068000 END
+MODI ATOM +SG   TYPE=S    CHARGE=-0.098400 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NGLN ! GLUTAMINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.149300 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.199600 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.199600 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.199600 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.053600 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.101500 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.065100 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.005000 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.005000 END
+MODI ATOM +CG   TYPE=CT   CHARGE=-0.090300 END
+MODI ATOM +HG2  TYPE=HC   CHARGE= 0.033100 END
+MODI ATOM +HG3  TYPE=HC   CHARGE= 0.033100 END
+MODI ATOM +CD   TYPE=C    CHARGE= 0.735400 END
+MODI ATOM +OE1  TYPE=O    CHARGE=-0.613300 END
+MODI ATOM +NE2  TYPE=N    CHARGE=-1.003100 END
+MODI ATOM +HE21 TYPE=H    CHARGE= 0.442900 END
+MODI ATOM +HE22 TYPE=H    CHARGE= 0.442900 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NGLU ! GLUTAMIC ACID - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.001700 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.239100 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.239100 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.239100 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.058800 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.120200 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.090900 END
+MODI ATOM +HB2  TYPE=HC   CHARGE=-0.023200 END
+MODI ATOM +HB3  TYPE=HC   CHARGE=-0.023200 END
+MODI ATOM +CG   TYPE=CT   CHARGE=-0.023600 END
+MODI ATOM +HG2  TYPE=HC   CHARGE=-0.031500 END
+MODI ATOM +HG3  TYPE=HC   CHARGE=-0.031500 END
+MODI ATOM +CD   TYPE=C    CHARGE= 0.808700 END
+MODI ATOM +OE1  TYPE=O2   CHARGE=-0.818900 END
+MODI ATOM +OE2  TYPE=O2   CHARGE=-0.818900 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.562100 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.588900 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NGLY ! GLYCINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.294300 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.164200 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.164200 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.164200 END
+MODI ATOM +CA   TYPE=CT   CHARGE=-0.010000 END
+MODI ATOM +HA2  TYPE=HP   CHARGE= 0.089500 END
+MODI ATOM +HA3  TYPE=HP   CHARGE= 0.089500 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.616300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.572200 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA2  +CA   +N    +H1  
+ADD  DIHE +HA3  +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA2  +CA   +N    +H2  
+ADD  DIHE +HA3  +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA2  +CA   +N    +H3  
+ADD  DIHE +HA3  +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA2  MULT 3
+ADD  DIHE +O    +C    +CA   +HA2 
+DELE DIHE +O    +C    +CA   +HA3  MULT 3
+ADD  DIHE +O    +C    +CA   +HA3 
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NHID ! HISTIDINE DELTAH - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.154200 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.196300 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.196300 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.196300 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.096400 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.095800 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.025900 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.020900 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.020900 END
+MODI ATOM +CG   TYPE=CC   CHARGE=-0.039900 END
+MODI ATOM +ND1  TYPE=NA   CHARGE=-0.381900 END
+MODI ATOM +HD1  TYPE=H    CHARGE= 0.363200 END
+MODI ATOM +CE1  TYPE=CR   CHARGE= 0.212700 END
+MODI ATOM +HE1  TYPE=H5   CHARGE= 0.138500 END
+MODI ATOM +NE2  TYPE=NB   CHARGE=-0.571100 END
+MODI ATOM +CD2  TYPE=CV   CHARGE= 0.104600 END
+MODI ATOM +HD2  TYPE=H4   CHARGE= 0.129900 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NHIE ! HISTIDINE EPSILONH - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.147200 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.201600 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.201600 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.201600 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.023600 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.138000 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.048900 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.022300 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.022300 END
+MODI ATOM +CG   TYPE=CC   CHARGE= 0.174000 END
+MODI ATOM +ND1  TYPE=NB   CHARGE=-0.557900 END
+MODI ATOM +CE1  TYPE=CR   CHARGE= 0.180400 END
+MODI ATOM +HE1  TYPE=H5   CHARGE= 0.139700 END
+MODI ATOM +NE2  TYPE=NA   CHARGE=-0.278100 END
+MODI ATOM +HE2  TYPE=H    CHARGE= 0.332400 END
+MODI ATOM +CD2  TYPE=CW   CHARGE=-0.234900 END
+MODI ATOM +HD2  TYPE=H4   CHARGE= 0.196300 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NHIP ! HISTIDINE PLUS - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.256000 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.170400 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.170400 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.170400 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.058100 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.104700 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.048400 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.053100 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.053100 END
+MODI ATOM +CG   TYPE=CC   CHARGE=-0.023600 END
+MODI ATOM +ND1  TYPE=NA   CHARGE=-0.151000 END
+MODI ATOM +HD1  TYPE=H    CHARGE= 0.382100 END
+MODI ATOM +CE1  TYPE=CR   CHARGE=-0.001100 END
+MODI ATOM +HE1  TYPE=H5   CHARGE= 0.264500 END
+MODI ATOM +NE2  TYPE=NA   CHARGE=-0.173900 END
+MODI ATOM +HE2  TYPE=H    CHARGE= 0.392100 END
+MODI ATOM +CD2  TYPE=CW   CHARGE=-0.143300 END
+MODI ATOM +HD2  TYPE=H4   CHARGE= 0.249500 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.721400 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.601300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NILE ! ISOLEUCINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.031100 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.232900 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.232900 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.232900 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.025700 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.103100 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.188500 END
+MODI ATOM +HB   TYPE=HC   CHARGE= 0.021300 END
+MODI ATOM +CG2  TYPE=CT   CHARGE=-0.372000 END
+MODI ATOM +HG21 TYPE=HC   CHARGE= 0.094700 END
+MODI ATOM +HG22 TYPE=HC   CHARGE= 0.094700 END
+MODI ATOM +HG23 TYPE=HC   CHARGE= 0.094700 END
+MODI ATOM +CG1  TYPE=CT   CHARGE=-0.038700 END
+MODI ATOM +HG12 TYPE=HC   CHARGE= 0.020100 END
+MODI ATOM +HG13 TYPE=HC   CHARGE= 0.020100 END
+MODI ATOM +CD1  TYPE=CT   CHARGE=-0.090800 END
+MODI ATOM +HD11 TYPE=HC   CHARGE= 0.022600 END
+MODI ATOM +HD12 TYPE=HC   CHARGE= 0.022600 END
+MODI ATOM +HD13 TYPE=HC   CHARGE= 0.022600 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NLEU ! LEUCINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.101000 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.214800 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.214800 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.214800 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.010400 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.105300 END
+MODI ATOM +CB   TYPE=CT   CHARGE=-0.024400 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.025600 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.025600 END
+MODI ATOM +CG   TYPE=CT   CHARGE= 0.342100 END
+MODI ATOM +HG   TYPE=HC   CHARGE=-0.038000 END
+MODI ATOM +CD1  TYPE=CT   CHARGE=-0.410600 END
+MODI ATOM +HD11 TYPE=HC   CHARGE= 0.098000 END
+MODI ATOM +HD12 TYPE=HC   CHARGE= 0.098000 END
+MODI ATOM +HD13 TYPE=HC   CHARGE= 0.098000 END
+MODI ATOM +CD2  TYPE=CT   CHARGE=-0.410400 END
+MODI ATOM +HD21 TYPE=HC   CHARGE= 0.098000 END
+MODI ATOM +HD22 TYPE=HC   CHARGE= 0.098000 END
+MODI ATOM +HD23 TYPE=HC   CHARGE= 0.098000 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NLYS ! LYSINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.096600 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.216500 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.216500 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.216500 END
+MODI ATOM +CA   TYPE=CT   CHARGE=-0.001500 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.118000 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.021200 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.028300 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.028300 END
+MODI ATOM +CG   TYPE=CT   CHARGE=-0.004800 END
+MODI ATOM +HG2  TYPE=HC   CHARGE= 0.012100 END
+MODI ATOM +HG3  TYPE=HC   CHARGE= 0.012100 END
+MODI ATOM +CD   TYPE=CT   CHARGE=-0.060800 END
+MODI ATOM +HD2  TYPE=HC   CHARGE= 0.063300 END
+MODI ATOM +HD3  TYPE=HC   CHARGE= 0.063300 END
+MODI ATOM +CE   TYPE=CT   CHARGE=-0.018100 END
+MODI ATOM +HE2  TYPE=HP   CHARGE= 0.117100 END
+MODI ATOM +HE3  TYPE=HP   CHARGE= 0.117100 END
+MODI ATOM +NZ   TYPE=N3   CHARGE=-0.376400 END
+MODI ATOM +HZ1  TYPE=H    CHARGE= 0.338200 END
+MODI ATOM +HZ2  TYPE=H    CHARGE= 0.338200 END
+MODI ATOM +HZ3  TYPE=H    CHARGE= 0.338200 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.721400 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.601300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NMET ! METHIONINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.159200 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.198400 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.198400 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.198400 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.022100 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.111600 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.086500 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.012500 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.012500 END
+MODI ATOM +CG   TYPE=CT   CHARGE= 0.033400 END
+MODI ATOM +HG2  TYPE=H1   CHARGE= 0.029200 END
+MODI ATOM +HG3  TYPE=H1   CHARGE= 0.029200 END
+MODI ATOM +SD   TYPE=S    CHARGE=-0.277400 END
+MODI ATOM +CE   TYPE=CT   CHARGE=-0.034100 END
+MODI ATOM +HE1  TYPE=H1   CHARGE= 0.059700 END
+MODI ATOM +HE2  TYPE=H1   CHARGE= 0.059700 END
+MODI ATOM +HE3  TYPE=H1   CHARGE= 0.059700 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NPHE ! PHENYLALANINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.173700 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.192100 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.192100 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.192100 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.073300 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.104100 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.033000 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.010400 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.010400 END
+MODI ATOM +CG   TYPE=CA   CHARGE= 0.003100 END
+MODI ATOM +CD1  TYPE=CA   CHARGE=-0.139200 END
+MODI ATOM +HD1  TYPE=HA   CHARGE= 0.137400 END
+MODI ATOM +CE1  TYPE=CA   CHARGE=-0.160200 END
+MODI ATOM +HE1  TYPE=HA   CHARGE= 0.143300 END
+MODI ATOM +CZ   TYPE=CA   CHARGE=-0.120800 END
+MODI ATOM +HZ   TYPE=HA   CHARGE= 0.132900 END
+MODI ATOM +CE2  TYPE=CA   CHARGE=-0.160300 END
+MODI ATOM +HE2  TYPE=HA   CHARGE= 0.143300 END
+MODI ATOM +CD2  TYPE=CA   CHARGE=-0.139100 END
+MODI ATOM +HD2  TYPE=HA   CHARGE= 0.137400 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NPRO ! PROLINE - N-terminal patch
+MODI ATOM +N    TYPE=N3   CHARGE=-0.202000 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.312000 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.312000 END
+MODI ATOM +CD   TYPE=CT   CHARGE=-0.012000 END
+MODI ATOM +HD2  TYPE=HP   CHARGE= 0.100000 END
+MODI ATOM +HD3  TYPE=HP   CHARGE= 0.100000 END
+MODI ATOM +CG   TYPE=CT   CHARGE=-0.121000 END
+MODI ATOM +HG2  TYPE=HC   CHARGE= 0.100000 END
+MODI ATOM +HG3  TYPE=HC   CHARGE= 0.100000 END
+MODI ATOM +CB   TYPE=CT   CHARGE=-0.115000 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.100000 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.100000 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.100000 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.100000 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.526000 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.500000 END
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CD  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CD  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HD2  +CD   +N    +H2  
+ADD  DIHE +HD3  +CD   +N    +H2  
+ADD  DIHE +CG   +CD   +N    +H2  
+ADD  DIHE +HD2  +CD   +N    +H3  
+ADD  DIHE +HD3  +CD   +N    +H3  
+ADD  DIHE +CG   +CD   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H2   +CA   *+N   +CD   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NSER ! SERINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.184900 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.189800 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.189800 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.189800 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.056700 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.078200 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.259600 END
+MODI ATOM +HB2  TYPE=H1   CHARGE= 0.027300 END
+MODI ATOM +HB3  TYPE=H1   CHARGE= 0.027300 END
+MODI ATOM +OG   TYPE=OH   CHARGE=-0.671400 END
+MODI ATOM +HG   TYPE=HO   CHARGE= 0.423900 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.616300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.572200 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +OG   +CB   +CA   +HA   MULT 2
+ADD  DIHE +OG   +CB   +CA   +HA  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NTHR ! THREONINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.181200 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.193400 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.193400 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.193400 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.003400 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.108700 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.451400 END
+MODI ATOM +HB   TYPE=H1   CHARGE=-0.032300 END
+MODI ATOM +CG2  TYPE=CT   CHARGE=-0.255400 END
+MODI ATOM +HG21 TYPE=HC   CHARGE= 0.062700 END
+MODI ATOM +HG22 TYPE=HC   CHARGE= 0.062700 END
+MODI ATOM +HG23 TYPE=HC   CHARGE= 0.062700 END
+MODI ATOM +OG1  TYPE=OH   CHARGE=-0.676400 END
+MODI ATOM +HG1  TYPE=HO   CHARGE= 0.407000 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.616300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.572200 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +OG1  +CB   +CA   +HA   MULT 2
+ADD  DIHE +OG1  +CB   +CA   +HA  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NTRP ! TRYPTOPHAN - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.191300 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.188800 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.188800 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.188800 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.042100 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.116200 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.054300 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.022200 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.022200 END
+MODI ATOM +CG   TYPE=C*   CHARGE=-0.165400 END
+MODI ATOM +CD1  TYPE=CW   CHARGE=-0.178800 END
+MODI ATOM +HD1  TYPE=H4   CHARGE= 0.219500 END
+MODI ATOM +NE1  TYPE=NA   CHARGE=-0.344400 END
+MODI ATOM +CE2  TYPE=CN   CHARGE= 0.157500 END
+MODI ATOM +CZ2  TYPE=CA   CHARGE=-0.271000 END
+MODI ATOM +HZ2  TYPE=HA   CHARGE= 0.158900 END
+MODI ATOM +CH2  TYPE=CA   CHARGE=-0.108000 END
+MODI ATOM +HH2  TYPE=HA   CHARGE= 0.141100 END
+MODI ATOM +CZ3  TYPE=CA   CHARGE=-0.203400 END
+MODI ATOM +HZ3  TYPE=HA   CHARGE= 0.145800 END
+MODI ATOM +CE3  TYPE=CA   CHARGE=-0.226500 END
+MODI ATOM +HE3  TYPE=HA   CHARGE= 0.164600 END
+MODI ATOM +CD2  TYPE=CB   CHARGE= 0.113200 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NTYR ! TYROSINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.194000 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.187300 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.187300 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.187300 END
+MODI ATOM +CA   TYPE=CT   CHARGE= 0.057000 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.098300 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.065900 END
+MODI ATOM +HB2  TYPE=HC   CHARGE= 0.010200 END
+MODI ATOM +HB3  TYPE=HC   CHARGE= 0.010200 END
+MODI ATOM +CG   TYPE=CA   CHARGE=-0.020500 END
+MODI ATOM +CD1  TYPE=CA   CHARGE=-0.200200 END
+MODI ATOM +HD1  TYPE=HA   CHARGE= 0.172000 END
+MODI ATOM +CE1  TYPE=CA   CHARGE=-0.223900 END
+MODI ATOM +HE1  TYPE=HA   CHARGE= 0.165000 END
+MODI ATOM +CZ   TYPE=C    CHARGE= 0.313900 END
+MODI ATOM +OH   TYPE=OH   CHARGE=-0.557800 END
+MODI ATOM +HH   TYPE=HO   CHARGE= 0.400100 END
+MODI ATOM +CE2  TYPE=CA   CHARGE=-0.223900 END
+MODI ATOM +HE2  TYPE=HA   CHARGE= 0.165000 END
+MODI ATOM +CD2  TYPE=CA   CHARGE=-0.200200 END
+MODI ATOM +HD2  TYPE=HA   CHARGE= 0.172000 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.612300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.571300 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES NVAL ! VALINE - N-terminal patch
+DELE ATOM +H    END
+MODI ATOM +N    TYPE=N3   CHARGE= 0.057700 END
+ADD  ATOM +H1   TYPE=H    CHARGE= 0.227200 END
+ADD  ATOM +H2   TYPE=H    CHARGE= 0.227200 END
+ADD  ATOM +H3   TYPE=H    CHARGE= 0.227200 END
+MODI ATOM +CA   TYPE=CT   CHARGE=-0.005400 END
+MODI ATOM +HA   TYPE=HP   CHARGE= 0.109300 END
+MODI ATOM +CB   TYPE=CT   CHARGE= 0.319600 END
+MODI ATOM +HB   TYPE=HC   CHARGE=-0.022100 END
+MODI ATOM +CG1  TYPE=CT   CHARGE=-0.312900 END
+MODI ATOM +HG11 TYPE=HC   CHARGE= 0.073500 END
+MODI ATOM +HG12 TYPE=HC   CHARGE= 0.073500 END
+MODI ATOM +HG13 TYPE=HC   CHARGE= 0.073500 END
+MODI ATOM +CG2  TYPE=CT   CHARGE=-0.312900 END
+MODI ATOM +HG21 TYPE=HC   CHARGE= 0.073500 END
+MODI ATOM +HG22 TYPE=HC   CHARGE= 0.073500 END
+MODI ATOM +HG23 TYPE=HC   CHARGE= 0.073500 END
+MODI ATOM +C    TYPE=C    CHARGE= 0.616300 END
+MODI ATOM +O    TYPE=O    CHARGE=-0.572200 END
+ADD  BOND +N    +H1  
+ADD  BOND +N    +H2  
+ADD  BOND +N    +H3  
+ADD  ANGL +H1   +N    +H2  
+ADD  ANGL +H1   +N    +H3  
+ADD  ANGL +H1   +N    +CA  
+ADD  ANGL +H2   +N    +H3  
+ADD  ANGL +H2   +N    +CA  
+ADD  ANGL +H3   +N    +CA  
+ADD  DIHE +HA   +CA   +N    +H1  
+ADD  DIHE +CB   +CA   +N    +H1  
+ADD  DIHE +C    +CA   +N    +H1  
+ADD  DIHE +HA   +CA   +N    +H2  
+ADD  DIHE +CB   +CA   +N    +H2  
+ADD  DIHE +C    +CA   +N    +H2  
+ADD  DIHE +HA   +CA   +N    +H3  
+ADD  DIHE +CB   +CA   +N    +H3  
+ADD  DIHE +C    +CA   +N    +H3  
+DELE DIHE +O    +C    +CA   +HA   MULT 3
+ADD  DIHE +O    +C    +CA   +HA  
+ADD  DONO +H1   +N   
+ADD  DONO +H2   +N   
+ADD  DONO +H3   +N   
+ADD  IC +H1   +N    +CA   +C    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +H2   +CA   *+N   +H1   0.0000 0.0000 120.0000 0.0000 0.0000
+ADD  IC +H3   +CA   *+N   +H2   0.0000 0.0000 120.0000 0.0000 0.0000
+END
+
+PRES CALA ! ALANINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.174700 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.106700 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.209300 END
+MODI ATOM -HB1  TYPE=HC   CHARGE= 0.076400 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.076400 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.076400 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.773100 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.805500 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.805500 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CARG ! ARGININE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.348100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.276400 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.306800 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.144700 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.037400 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.037100 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.037100 END
+MODI ATOM -CG   TYPE=CT   CHARGE= 0.074400 END
+MODI ATOM -HG2  TYPE=HC   CHARGE= 0.018500 END
+MODI ATOM -HG3  TYPE=HC   CHARGE= 0.018500 END
+MODI ATOM -CD   TYPE=CT   CHARGE= 0.111400 END
+MODI ATOM -HD2  TYPE=H1   CHARGE= 0.046800 END
+MODI ATOM -HD3  TYPE=H1   CHARGE= 0.046800 END
+MODI ATOM -NE   TYPE=N2   CHARGE=-0.556400 END
+MODI ATOM -HE   TYPE=H    CHARGE= 0.347900 END
+MODI ATOM -CZ   TYPE=CA   CHARGE= 0.836800 END
+MODI ATOM -NH1  TYPE=N2   CHARGE=-0.873700 END
+MODI ATOM -HH11 TYPE=H    CHARGE= 0.449300 END
+MODI ATOM -HH12 TYPE=H    CHARGE= 0.449300 END
+MODI ATOM -NH2  TYPE=N2   CHARGE=-0.873700 END
+MODI ATOM -HH21 TYPE=H    CHARGE= 0.449300 END
+MODI ATOM -HH22 TYPE=H    CHARGE= 0.449300 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.855700 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.826600 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.826600 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CASN ! ASPARAGINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.208000 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.135800 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.229900 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.102300 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.102300 END
+MODI ATOM -CG   TYPE=C    CHARGE= 0.715300 END
+MODI ATOM -OD1  TYPE=O    CHARGE=-0.601000 END
+MODI ATOM -ND2  TYPE=N    CHARGE=-0.908400 END
+MODI ATOM -HD21 TYPE=H    CHARGE= 0.415000 END
+MODI ATOM -HD22 TYPE=H    CHARGE= 0.415000 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.805000 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.814700 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.814700 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CASP ! ASPARTIC ACID - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.519200 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.305500 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.181700 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.104600 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.067700 END
+MODI ATOM -HB2  TYPE=HC   CHARGE=-0.021200 END
+MODI ATOM -HB3  TYPE=HC   CHARGE=-0.021200 END
+MODI ATOM -CG   TYPE=C    CHARGE= 0.885100 END
+MODI ATOM -OD1  TYPE=O2   CHARGE=-0.816200 END
+MODI ATOM -OD2  TYPE=O2   CHARGE=-0.816200 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.725600 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.788700 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.788700 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CCYS ! CYSTEINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.163500 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.139600 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.199600 END
+MODI ATOM -HB2  TYPE=H1   CHARGE= 0.143700 END
+MODI ATOM -HB3  TYPE=H1   CHARGE= 0.143700 END
+MODI ATOM -SG   TYPE=SH   CHARGE=-0.310200 END
+MODI ATOM -HG   TYPE=HS   CHARGE= 0.206800 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.749700 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.798100 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.798100 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CCYX ! CYSTEINE (S-S BRIDGE) - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.131800 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.093800 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.194300 END
+MODI ATOM -HB2  TYPE=H1   CHARGE= 0.122800 END
+MODI ATOM -HB3  TYPE=H1   CHARGE= 0.122800 END
+MODI ATOM -SG   TYPE=S    CHARGE=-0.052900 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.761800 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.804100 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.804100 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CGLN ! GLUTAMINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.224800 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.123200 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.066400 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.045200 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.045200 END
+MODI ATOM -CG   TYPE=CT   CHARGE=-0.021000 END
+MODI ATOM -HG2  TYPE=HC   CHARGE= 0.020300 END
+MODI ATOM -HG3  TYPE=HC   CHARGE= 0.020300 END
+MODI ATOM -CD   TYPE=C    CHARGE= 0.709300 END
+MODI ATOM -OE1  TYPE=O    CHARGE=-0.609800 END
+MODI ATOM -NE2  TYPE=N    CHARGE=-0.957400 END
+MODI ATOM -HE21 TYPE=H    CHARGE= 0.430400 END
+MODI ATOM -HE22 TYPE=H    CHARGE= 0.430400 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.777500 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.804200 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.804200 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CGLU ! GLUTAMIC ACID - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.519200 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.305500 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.205900 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.139900 END
+MODI ATOM -CB   TYPE=CT   CHARGE= 0.007100 END
+MODI ATOM -HB2  TYPE=HC   CHARGE=-0.007800 END
+MODI ATOM -HB3  TYPE=HC   CHARGE=-0.007800 END
+MODI ATOM -CG   TYPE=CT   CHARGE= 0.067500 END
+MODI ATOM -HG2  TYPE=HC   CHARGE=-0.054800 END
+MODI ATOM -HG3  TYPE=HC   CHARGE=-0.054800 END
+MODI ATOM -CD   TYPE=C    CHARGE= 0.818300 END
+MODI ATOM -OE1  TYPE=O2   CHARGE=-0.822000 END
+MODI ATOM -OE2  TYPE=O2   CHARGE=-0.822000 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.742000 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.793000 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.793000 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CGLY ! GLYCINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.249300 END
+MODI ATOM -HA2  TYPE=H1   CHARGE= 0.105600 END
+MODI ATOM -HA3  TYPE=H1   CHARGE= 0.105600 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.723100 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.785500 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.785500 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA2  -CA   -C    -OXT 
+ADD  DIHE -HA3  -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA2  MULT 3
+ADD  DIHE -O    -C    -CA   -HA2 
+DELE DIHE -O    -C    -CA   -HA3  MULT 3
+ADD  DIHE -O    -C    -CA   -HA3 
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CHID ! HISTIDINE DELTAH - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.173900 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.110000 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.104600 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.056500 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.056500 END
+MODI ATOM -CG   TYPE=CC   CHARGE= 0.029300 END
+MODI ATOM -ND1  TYPE=NA   CHARGE=-0.389200 END
+MODI ATOM -HD1  TYPE=H    CHARGE= 0.375500 END
+MODI ATOM -CE1  TYPE=CR   CHARGE= 0.192500 END
+MODI ATOM -HE1  TYPE=H5   CHARGE= 0.141800 END
+MODI ATOM -NE2  TYPE=NB   CHARGE=-0.562900 END
+MODI ATOM -CD2  TYPE=CV   CHARGE= 0.100100 END
+MODI ATOM -HD2  TYPE=H4   CHARGE= 0.124100 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.761500 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.801600 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.801600 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CHIE ! HISTIDINE EPSILONH - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.269900 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.165000 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.106800 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.062000 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.062000 END
+MODI ATOM -CG   TYPE=CC   CHARGE= 0.272400 END
+MODI ATOM -ND1  TYPE=NB   CHARGE=-0.551700 END
+MODI ATOM -CE1  TYPE=CR   CHARGE= 0.155800 END
+MODI ATOM -HE1  TYPE=H5   CHARGE= 0.144800 END
+MODI ATOM -NE2  TYPE=NA   CHARGE=-0.267000 END
+MODI ATOM -HE2  TYPE=H    CHARGE= 0.331900 END
+MODI ATOM -CD2  TYPE=CW   CHARGE=-0.258800 END
+MODI ATOM -HD2  TYPE=H4   CHARGE= 0.195700 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.791600 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.806500 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.806500 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CHIP ! HISTIDINE PLUS - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.348100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.276400 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.144500 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.111500 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.080000 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.086800 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.086800 END
+MODI ATOM -CG   TYPE=CC   CHARGE= 0.029800 END
+MODI ATOM -ND1  TYPE=NA   CHARGE=-0.150100 END
+MODI ATOM -HD1  TYPE=H    CHARGE= 0.388300 END
+MODI ATOM -CE1  TYPE=CR   CHARGE=-0.025100 END
+MODI ATOM -HE1  TYPE=H5   CHARGE= 0.269400 END
+MODI ATOM -NE2  TYPE=NA   CHARGE=-0.168300 END
+MODI ATOM -HE2  TYPE=H    CHARGE= 0.391300 END
+MODI ATOM -CD2  TYPE=CW   CHARGE=-0.125600 END
+MODI ATOM -HD2  TYPE=H4   CHARGE= 0.233600 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.803200 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.817700 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.817700 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CILE ! ISOLEUCINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.310000 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.137500 END
+MODI ATOM -CB   TYPE=CT   CHARGE= 0.036300 END
+MODI ATOM -HB   TYPE=HC   CHARGE= 0.076600 END
+MODI ATOM -CG2  TYPE=CT   CHARGE=-0.349800 END
+MODI ATOM -HG21 TYPE=HC   CHARGE= 0.102100 END
+MODI ATOM -HG22 TYPE=HC   CHARGE= 0.102100 END
+MODI ATOM -HG23 TYPE=HC   CHARGE= 0.102100 END
+MODI ATOM -CG1  TYPE=CT   CHARGE=-0.032300 END
+MODI ATOM -HG12 TYPE=HC   CHARGE= 0.032100 END
+MODI ATOM -HG13 TYPE=HC   CHARGE= 0.032100 END
+MODI ATOM -CD1  TYPE=CT   CHARGE=-0.069900 END
+MODI ATOM -HD11 TYPE=HC   CHARGE= 0.019600 END
+MODI ATOM -HD12 TYPE=HC   CHARGE= 0.019600 END
+MODI ATOM -HD13 TYPE=HC   CHARGE= 0.019600 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.834300 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.819000 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.819000 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CLEU ! LEUCINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.284700 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.134600 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.246900 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.097400 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.097400 END
+MODI ATOM -CG   TYPE=CT   CHARGE= 0.370600 END
+MODI ATOM -HG   TYPE=HC   CHARGE=-0.037400 END
+MODI ATOM -CD1  TYPE=CT   CHARGE=-0.416300 END
+MODI ATOM -HD11 TYPE=HC   CHARGE= 0.103800 END
+MODI ATOM -HD12 TYPE=HC   CHARGE= 0.103800 END
+MODI ATOM -HD13 TYPE=HC   CHARGE= 0.103800 END
+MODI ATOM -CD2  TYPE=CT   CHARGE=-0.416300 END
+MODI ATOM -HD21 TYPE=HC   CHARGE= 0.103800 END
+MODI ATOM -HD22 TYPE=HC   CHARGE= 0.103800 END
+MODI ATOM -HD23 TYPE=HC   CHARGE= 0.103800 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.832600 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.819900 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.819900 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CLYS ! LYSINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.348100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.276400 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.290300 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.143800 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.053800 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.048200 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.048200 END
+MODI ATOM -CG   TYPE=CT   CHARGE= 0.022700 END
+MODI ATOM -HG2  TYPE=HC   CHARGE= 0.013400 END
+MODI ATOM -HG3  TYPE=HC   CHARGE= 0.013400 END
+MODI ATOM -CD   TYPE=CT   CHARGE=-0.039200 END
+MODI ATOM -HD2  TYPE=HC   CHARGE= 0.061100 END
+MODI ATOM -HD3  TYPE=HC   CHARGE= 0.061100 END
+MODI ATOM -CE   TYPE=CT   CHARGE=-0.017600 END
+MODI ATOM -HE2  TYPE=HP   CHARGE= 0.112100 END
+MODI ATOM -HE3  TYPE=HP   CHARGE= 0.112100 END
+MODI ATOM -NZ   TYPE=N3   CHARGE=-0.374100 END
+MODI ATOM -HZ1  TYPE=H    CHARGE= 0.337400 END
+MODI ATOM -HZ2  TYPE=H    CHARGE= 0.337400 END
+MODI ATOM -HZ3  TYPE=H    CHARGE= 0.337400 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.848800 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.825200 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.825200 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CMET ! METHIONINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.259700 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.127700 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.023600 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.048000 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.048000 END
+MODI ATOM -CG   TYPE=CT   CHARGE= 0.049200 END
+MODI ATOM -HG2  TYPE=H1   CHARGE= 0.031700 END
+MODI ATOM -HG3  TYPE=H1   CHARGE= 0.031700 END
+MODI ATOM -SD   TYPE=S    CHARGE=-0.269200 END
+MODI ATOM -CE   TYPE=CT   CHARGE=-0.037600 END
+MODI ATOM -HE1  TYPE=H1   CHARGE= 0.062500 END
+MODI ATOM -HE2  TYPE=H1   CHARGE= 0.062500 END
+MODI ATOM -HE3  TYPE=H1   CHARGE= 0.062500 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.801300 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.810500 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.810500 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CPHE ! PHENYLALANINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.182500 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.109800 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.095900 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.044300 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.044300 END
+MODI ATOM -CG   TYPE=CA   CHARGE= 0.055200 END
+MODI ATOM -CD1  TYPE=CA   CHARGE=-0.130000 END
+MODI ATOM -HD1  TYPE=HA   CHARGE= 0.140800 END
+MODI ATOM -CE1  TYPE=CA   CHARGE=-0.184700 END
+MODI ATOM -HE1  TYPE=HA   CHARGE= 0.146100 END
+MODI ATOM -CZ   TYPE=CA   CHARGE=-0.094400 END
+MODI ATOM -HZ   TYPE=HA   CHARGE= 0.128000 END
+MODI ATOM -CE2  TYPE=CA   CHARGE=-0.184700 END
+MODI ATOM -HE2  TYPE=HA   CHARGE= 0.146100 END
+MODI ATOM -CD2  TYPE=CA   CHARGE=-0.130000 END
+MODI ATOM -HD2  TYPE=HA   CHARGE= 0.140800 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.766000 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.802600 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.802600 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CPRO ! PROLINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.280200 END
+MODI ATOM -CD   TYPE=CT   CHARGE= 0.043400 END
+MODI ATOM -HD2  TYPE=H1   CHARGE= 0.033100 END
+MODI ATOM -HD3  TYPE=H1   CHARGE= 0.033100 END
+MODI ATOM -CG   TYPE=CT   CHARGE= 0.046600 END
+MODI ATOM -HG2  TYPE=HC   CHARGE= 0.017200 END
+MODI ATOM -HG3  TYPE=HC   CHARGE= 0.017200 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.054300 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.038100 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.038100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.133600 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.077600 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.663100 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.769700 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.769700 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CSER ! SERINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.272200 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.130400 END
+MODI ATOM -CB   TYPE=CT   CHARGE= 0.112300 END
+MODI ATOM -HB2  TYPE=H1   CHARGE= 0.081300 END
+MODI ATOM -HB3  TYPE=H1   CHARGE= 0.081300 END
+MODI ATOM -OG   TYPE=OH   CHARGE=-0.651400 END
+MODI ATOM -HG   TYPE=HO   CHARGE= 0.447400 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.811300 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.813200 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.813200 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CTHR ! THREONINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.242000 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.120700 END
+MODI ATOM -CB   TYPE=CT   CHARGE= 0.302500 END
+MODI ATOM -HB   TYPE=H1   CHARGE= 0.007800 END
+MODI ATOM -CG2  TYPE=CT   CHARGE=-0.185300 END
+MODI ATOM -HG21 TYPE=HC   CHARGE= 0.058600 END
+MODI ATOM -HG22 TYPE=HC   CHARGE= 0.058600 END
+MODI ATOM -HG23 TYPE=HC   CHARGE= 0.058600 END
+MODI ATOM -OG1  TYPE=OH   CHARGE=-0.649600 END
+MODI ATOM -HG1  TYPE=HO   CHARGE= 0.411900 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.781000 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.804400 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.804400 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CTRP ! TRYPTOPHAN - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.208400 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.127200 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.074200 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.049700 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.049700 END
+MODI ATOM -CG   TYPE=C*   CHARGE=-0.079600 END
+MODI ATOM -CD1  TYPE=CW   CHARGE=-0.180800 END
+MODI ATOM -HD1  TYPE=H4   CHARGE= 0.204300 END
+MODI ATOM -NE1  TYPE=NA   CHARGE=-0.331600 END
+MODI ATOM -HE1  TYPE=H    CHARGE= 0.341300 END
+MODI ATOM -CE2  TYPE=CN   CHARGE= 0.122200 END
+MODI ATOM -CZ2  TYPE=CA   CHARGE=-0.259400 END
+MODI ATOM -HZ2  TYPE=HA   CHARGE= 0.156700 END
+MODI ATOM -CH2  TYPE=CA   CHARGE=-0.102000 END
+MODI ATOM -HH2  TYPE=HA   CHARGE= 0.140100 END
+MODI ATOM -CZ3  TYPE=CA   CHARGE=-0.228700 END
+MODI ATOM -HZ3  TYPE=HA   CHARGE= 0.150700 END
+MODI ATOM -CE3  TYPE=CA   CHARGE=-0.183700 END
+MODI ATOM -HE3  TYPE=HA   CHARGE= 0.149100 END
+MODI ATOM -CD2  TYPE=CB   CHARGE= 0.107800 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.765800 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.801100 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.801100 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CTYR ! TYROSINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.201500 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.109200 END
+MODI ATOM -CB   TYPE=CT   CHARGE=-0.075200 END
+MODI ATOM -HB2  TYPE=HC   CHARGE= 0.049000 END
+MODI ATOM -HB3  TYPE=HC   CHARGE= 0.049000 END
+MODI ATOM -CG   TYPE=CA   CHARGE= 0.024300 END
+MODI ATOM -CD1  TYPE=CA   CHARGE=-0.192200 END
+MODI ATOM -HD1  TYPE=HA   CHARGE= 0.178000 END
+MODI ATOM -CE1  TYPE=CA   CHARGE=-0.245800 END
+MODI ATOM -HE1  TYPE=HA   CHARGE= 0.167300 END
+MODI ATOM -CZ   TYPE=C    CHARGE= 0.339500 END
+MODI ATOM -OH   TYPE=OH   CHARGE=-0.564300 END
+MODI ATOM -HH   TYPE=HO   CHARGE= 0.401700 END
+MODI ATOM -CE2  TYPE=CA   CHARGE=-0.245800 END
+MODI ATOM -HE2  TYPE=HA   CHARGE= 0.167300 END
+MODI ATOM -CD2  TYPE=CA   CHARGE=-0.192200 END
+MODI ATOM -HD2  TYPE=HA   CHARGE= 0.178000 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.781700 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.807000 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.807000 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES CVAL ! VALINE - C-terminal patch
+MODI ATOM -N    TYPE=N    CHARGE=-0.382100 END
+MODI ATOM -H    TYPE=H    CHARGE= 0.268100 END
+MODI ATOM -CA   TYPE=CT   CHARGE=-0.343800 END
+MODI ATOM -HA   TYPE=H1   CHARGE= 0.143800 END
+MODI ATOM -CB   TYPE=CT   CHARGE= 0.194000 END
+MODI ATOM -HB   TYPE=HC   CHARGE= 0.030800 END
+MODI ATOM -CG1  TYPE=CT   CHARGE=-0.306400 END
+MODI ATOM -HG11 TYPE=HC   CHARGE= 0.083600 END
+MODI ATOM -HG12 TYPE=HC   CHARGE= 0.083600 END
+MODI ATOM -HG13 TYPE=HC   CHARGE= 0.083600 END
+MODI ATOM -CG2  TYPE=CT   CHARGE=-0.306400 END
+MODI ATOM -HG21 TYPE=HC   CHARGE= 0.083600 END
+MODI ATOM -HG22 TYPE=HC   CHARGE= 0.083600 END
+MODI ATOM -HG23 TYPE=HC   CHARGE= 0.083600 END
+MODI ATOM -C    TYPE=C    CHARGE= 0.835000 END
+MODI ATOM -O    TYPE=O2   CHARGE=-0.817300 END
+ADD  ATOM -OXT  TYPE=O2   CHARGE=-0.817300 END
+ADD  BOND -C    -OXT 
+ADD  ANGL -OXT  -C    -CA  
+ADD  ANGL -OXT  -C    -O   
+ADD  DIHE -N    -CA   -C    -OXT 
+ADD  DIHE -HA   -CA   -C    -OXT 
+ADD  DIHE -CB   -CA   -C    -OXT 
+DELE DIHE -O    -C    -CA   -HA   MULT 3
+ADD  DIHE -O    -C    -CA   -HA  
+ADD  IMPR -CA   -O    -C    -OXT 
+ADD  ACCE -OXT  -C   
+ADD  IC -N    -CA   -C    -OXT  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -OXT  -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES PEPT ! Generic peptide AA-AA link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CA  
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +H   
+ADD  ANGL -C    +N    +CA  
+ADD  DIHE +H    +N    -C    -CA  
+ADD  DIHE +CA   +N    -C    -CA  
+ADD  DIHE +H    +N    -C    -O    MULT 2
+ADD  DIHE +CA   +N    -C    -O   
+ADD  DIHE -N    -CA   -C    +N    MULT 4
+ADD  DIHE -HA   -CA   -C    +N   
+ADD  DIHE -CB   -CA   -C    +N    MULT 4
+ADD  DIHE +HA   +CA   +N    -C   
+ADD  DIHE +CB   +CA   +N    -C    MULT 4
+ADD  DIHE +C    +CA   +N    -C    MULT 4
+ADD  IMPR -CA   +N    -C    -O   
+ADD  IMPR -C    +CA   +N    +H   
+ADD  IC -C    +CA   *+N   +H    1.3551 126.4900 180.0000 115.4200 0.9996
+ADD  IC -C    +N    +CA   +C    1.3551 126.4900 180.0000 114.4400 1.5390
+ADD  IC -N    -CA   -C    +N    1.4592 114.4400 180.0000 116.8400 1.3558
+ADD  IC +N    -CA   *-C   -O    1.3558 116.8400 180.0000 122.5200 1.2297
+ADD  IC -CA   -C    +N    +CA   1.5390 116.8400 180.0000 126.7700 1.4613
+END
+
+PRES PPG1 ! Peptide AA-GLY link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CA  
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +H   
+ADD  ANGL -C    +N    +CA  
+ADD  DIHE +H    +N    -C    -CA  
+ADD  DIHE +CA   +N    -C    -CA  
+ADD  DIHE +H    +N    -C    -O    MULT 2
+ADD  DIHE +CA   +N    -C    -O   
+ADD  DIHE -N    -CA   -C    +N    MULT 4
+ADD  DIHE -HA   -CA   -C    +N   
+ADD  DIHE -CB   -CA   -C    +N    MULT 4
+ADD  DIHE +HA2  +CA   +N    -C   
+ADD  DIHE +HA3  +CA   +N    -C   
+ADD  DIHE +C    +CA   +N    -C    MULT 4
+ADD  IMPR -CA   +N    -C    -O   
+ADD  IMPR -C    +CA   +N    +H   
+ADD  IC -C    +CA   *+N   +H    1.3475 122.8200 180.0000 115.6200 0.9992
+ADD  IC -C    +N    +CA   +C    1.3475 122.8200 180.0000 108.9400 1.4971
+ADD  IC -N    -CA   -C    +N    1.4592 114.4400 180.0000 116.8400 1.3558
+ADD  IC +N    -CA   *-C   -O    1.3558 116.8400 180.0000 122.5200 1.2297
+ADD  IC -CA   -C    +N    +CA   1.5390 116.8400 180.0000 126.7700 1.4613
+END
+
+PRES PPG2 ! Peptide GLY-AA link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CA  
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +H   
+ADD  ANGL -C    +N    +CA  
+ADD  DIHE +H    +N    -C    -CA  
+ADD  DIHE +CA   +N    -C    -CA  
+ADD  DIHE +H    +N    -C    -O    MULT 2
+ADD  DIHE +CA   +N    -C    -O   
+ADD  DIHE -N    -CA   -C    +N    MULT 4
+ADD  DIHE -HA2  -CA   -C    +N   
+ADD  DIHE -HA3  -CA   -C    +N   
+ADD  DIHE +HA   +CA   +N    -C   
+ADD  DIHE +CB   +CA   +N    -C    MULT 4
+ADD  DIHE +C    +CA   +N    -C    MULT 4
+ADD  IMPR -CA   +N    -C    -O   
+ADD  IMPR -C    +CA   +N    +H   
+ADD  IC -C    +CA   *+N   +H    1.3551 126.4900 180.0000 115.4200 0.9996
+ADD  IC -C    +N    +CA   +C    1.3551 126.4900 180.0000 114.4400 1.5390
+ADD  IC -N    -CA   -C    +N    1.4553 108.9400 180.0000 117.6000 1.3479
+ADD  IC +N    -CA   *-C   -O    1.3479 117.6000 180.0000 120.8500 1.2289
+ADD  IC -CA   -C    +N    +CA   1.4971 117.6000 180.0000 124.0800 1.4560
+END
+
+PRES PPGG ! Peptide GLY-GLY link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CA  
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +H   
+ADD  ANGL -C    +N    +CA  
+ADD  DIHE +H    +N    -C    -CA  
+ADD  DIHE +CA   +N    -C    -CA  
+ADD  DIHE +H    +N    -C    -O    MULT 2
+ADD  DIHE +CA   +N    -C    -O   
+ADD  DIHE -N    -CA   -C    +N    MULT 4
+ADD  DIHE -HA2  -CA   -C    +N   
+ADD  DIHE -HA3  -CA   -C    +N   
+ADD  DIHE +HA2  +CA   +N    -C   
+ADD  DIHE +HA3  +CA   +N    -C   
+ADD  DIHE +C    +CA   +N    -C    MULT 4
+ADD  IMPR -CA   +N    -C    -O   
+ADD  IMPR -C    +CA   +N    +H   
+ADD  IC -C    +CA   *+N   +H    1.3475 122.8200 180.0000 115.6200 0.9992
+ADD  IC -C    +N    +CA   +C    1.3475 122.8200 180.0000 108.9400 1.4971
+ADD  IC -N    -CA   -C    +N    1.4553 108.9400 180.0000 117.6000 1.3479
+ADD  IC +N    -CA   *-C   -O    1.3479 117.6000 180.0000 120.8500 1.2289
+ADD  IC -CA   -C    +N    +CA   1.4971 117.6000 180.0000 124.0800 1.4560
+END
+
+PRES PEPP ! Peptide AA-PRO link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CA  
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +CD  
+ADD  ANGL -C    +N    +CA  
+ADD  DIHE +CD   +N    -C    -CA  
+ADD  DIHE +CA   +N    -C    -CA  
+ADD  DIHE +CD   +N    -C    -O   
+ADD  DIHE +CA   +N    -C    -O   
+ADD  DIHE -N    -CA   -C    +N    MULT 4
+ADD  DIHE -HA   -CA   -C    +N   
+ADD  DIHE -CB   -CA   -C    +N    MULT 4
+ADD  DIHE +HD2  +CD   +N    -C   
+ADD  DIHE +HD3  +CD   +N    -C   
+ADD  DIHE +CG   +CD   +N    -C    MULT 4
+ADD  DIHE +CB   +CA   +N    -C    MULT 4
+ADD  DIHE +HA   +CA   +N    -C   
+ADD  DIHE +C    +CA   +N    -C    MULT 4
+ADD  IMPR -CA   +N    -C    -O   
+ADD  IMPR -C    +CD   +N    +CA  
+ADD  IC -C    +CA   *+N   +CD   1.3366 122.9400 178.5100 112.7500 1.4624
+ADD  IC -C    +N    +CA   +C    1.3366 122.9400 -76.1200 110.8600 1.5399
+ADD  IC -N    -CA   -C    +N    1.4592 114.4400 180.0000 116.8400 1.3558
+ADD  IC +N    -CA   *-C   -O    1.3558 116.8400 180.0000 122.5200 1.2297
+ADD  IC -CA   -C    +N    +CA   1.5390 116.8400 180.0000 126.7700 1.4613
+END
+
+PRES PPGP ! Peptide GLY-PRO link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CA  
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +CD  
+ADD  ANGL -C    +N    +CA  
+ADD  DIHE +CD   +N    -C    -CA  
+ADD  DIHE +CA   +N    -C    -CA  
+ADD  DIHE +CD   +N    -C    -O   
+ADD  DIHE +CA   +N    -C    -O   
+ADD  DIHE -N    -CA   -C    +N    MULT 4
+ADD  DIHE -HA2  -CA   -C    +N   
+ADD  DIHE -HA3  -CA   -C    +N   
+ADD  DIHE +HD2  +CD   +N    -C   
+ADD  DIHE +HD3  +CD   +N    -C   
+ADD  DIHE +CG   +CD   +N    -C    MULT 4
+ADD  DIHE +CB   +CA   +N    -C    MULT 4
+ADD  DIHE +HA   +CA   +N    -C   
+ADD  DIHE +C    +CA   +N    -C    MULT 4
+ADD  IMPR -CA   +N    -C    -O   
+ADD  IMPR -C    +CD   +N    +CA  
+ADD  IC -C    +CA   *+N   +CD   1.3366 122.9400 178.5100 112.7500 1.4624
+ADD  IC -C    +N    +CA   +C    1.3366 122.9400 -76.1200 110.8600 1.5399
+ADD  IC -N    -CA   -C    +N    1.4553 108.9400 180.0000 117.6000 1.3479
+ADD  IC +N    -CA   *-C   -O    1.3479 117.6000 180.0000 120.8500 1.2289
+ADD  IC -CA   -C    +N    +CA   1.4971 117.6000 180.0000 124.0800 1.4560
+END
+
+PRES ACEA ! Peptide ACE-AA link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CH3 
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +H   
+ADD  ANGL -C    +N    +CA  
+ADD  DIHE +H    +N    -C    -CH3 
+ADD  DIHE +CA   +N    -C    -CH3 
+ADD  DIHE +H    +N    -C    -O    MULT 2
+ADD  DIHE +CA   +N    -C    -O   
+ADD  DIHE -HH31 -CH3  -C    +N   
+ADD  DIHE -HH32 -CH3  -C    +N   
+ADD  DIHE -HH33 -CH3  -C    +N   
+ADD  DIHE +HA   +CA   +N    -C   
+ADD  DIHE +CB   +CA   +N    -C    MULT 4
+ADD  DIHE +C    +CA   +N    -C    MULT 4
+ADD  IMPR -CH3  +N    -C    -O   
+ADD  IMPR -C    +CA   +N    +H   
+ADD  IC -C    +N    +CA   +C    0.0000 0.0000 -60.0000 0.0000 0.0000
+ADD  IC -C    +CA   *+N   +H    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -CH3  -C    +N    +CA   0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +N    -CH3  *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES ACEG ! Peptide ACE-GLY link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CH3 
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +H   
+ADD  ANGL -C    +N    +CA  
+ADD  DIHE +H    +N    -C    -CH3 
+ADD  DIHE +CA   +N    -C    -CH3 
+ADD  DIHE +H    +N    -C    -O    MULT 2
+ADD  DIHE +CA   +N    -C    -O   
+ADD  DIHE -HH31 -CH3  -C    +N   
+ADD  DIHE -HH32 -CH3  -C    +N   
+ADD  DIHE -HH33 -CH3  -C    +N   
+ADD  DIHE +HA2  +CA   +N    -C   
+ADD  DIHE +HA3  +CA   +N    -C   
+ADD  DIHE +C    +CA   +N    -C    MULT 4
+ADD  IMPR -CH3  +N    -C    -O   
+ADD  IMPR -C    +CA   +N    +H   
+ADD  IC -C    +N    +CA   +C    0.0000 0.0000 -60.0000 0.0000 0.0000
+ADD  IC -C    +CA   *+N   +H    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -CH3  -C    +N    +CA   0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +N    -CH3  *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES ACEP ! Peptide ACE-PRO link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CH3 
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +CD  
+ADD  ANGL -C    +N    +CA  
+ADD  DIHE +CD   +N    -C    -CH3 
+ADD  DIHE +CA   +N    -C    -CH3 
+ADD  DIHE +CD   +N    -C    -O   
+ADD  DIHE +CA   +N    -C    -O   
+ADD  DIHE -HH31 -CH3  -C    +N   
+ADD  DIHE -HH32 -CH3  -C    +N   
+ADD  DIHE -HH33 -CH3  -C    +N   
+ADD  DIHE +HD2  +CD   +N    -C   
+ADD  DIHE +HD3  +CD   +N    -C   
+ADD  DIHE +CG   +CD   +N    -C    MULT 4
+ADD  DIHE +CB   +CA   +N    -C    MULT 4
+ADD  DIHE +HA   +CA   +N    -C   
+ADD  DIHE +C    +CA   +N    -C    MULT 4
+ADD  IMPR -CH3  +N    -C    -O   
+ADD  IMPR -C    +CD   +N    +CA  
+ADD  IC -C    +N    +CA   +C    0.0000 0.0000 -60.0000 0.0000 0.0000
+ADD  IC -C    +CA   *+N   +CD   0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -CH3  -C    +N    +CA   0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +N    -CH3  *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES NHEA ! Peptide AA-NHE link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CA  
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +HN1 
+ADD  ANGL -C    +N    +HN2 
+ADD  DIHE +HN1  +N    -C    -CA  
+ADD  DIHE +HN2  +N    -C    -CA  
+ADD  DIHE +HN1  +N    -C    -O    MULT 2
+ADD  DIHE +HN2  +N    -C    -O    MULT 2
+ADD  DIHE -N    -CA   -C    +N    MULT 4
+ADD  DIHE -HA   -CA   -C    +N   
+ADD  DIHE -CB   -CA   -C    +N    MULT 4
+ADD  IMPR -CA   +N    -C    -O   
+ADD  IMPR -C    +HN1  +N    +HN2 
+ADD  IC -N    -CA   -C    -O    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +N    -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -CA   -C    +N    +HN1  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +HN1  -C    *+N   +HN2  0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES NHEG ! Peptide GLY-NHE link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CA  
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +HN1 
+ADD  ANGL -C    +N    +HN2 
+ADD  DIHE +HN1  +N    -C    -CA  
+ADD  DIHE +HN2  +N    -C    -CA  
+ADD  DIHE +HN1  +N    -C    -O    MULT 2
+ADD  DIHE +HN2  +N    -C    -O    MULT 2
+ADD  DIHE -N    -CA   -C    +N    MULT 4
+ADD  DIHE -HA2  -CA   -C    +N   
+ADD  DIHE -HA3  -CA   -C    +N   
+ADD  IMPR -CA   +N    -C    -O   
+ADD  IMPR -C    +HN1  +N    +HN2 
+ADD  IC -N    -CA   -C    -O    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +N    -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -CA   -C    +N    +HN1  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +HN1  -C    *+N   +HN2  0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES NMEA ! Peptide AA-NME link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CA  
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +H   
+ADD  ANGL -C    +N    +CH3 
+ADD  DIHE +H    +N    -C    -CA  
+ADD  DIHE +CH3  +N    -C    -CA  
+ADD  DIHE +H    +N    -C    -O    MULT 2
+ADD  DIHE +CH3  +N    -C    -O   
+ADD  DIHE -N    -CA   -C    +N    MULT 4
+ADD  DIHE -HA   -CA   -C    +N   
+ADD  DIHE -CB   -CA   -C    +N    MULT 4
+ADD  DIHE +HH31 +CH3  +N    -C   
+ADD  DIHE +HH32 +CH3  +N    -C   
+ADD  DIHE +HH33 +CH3  +N    -C   
+ADD  IMPR -CA   +N    -C    -O   
+ADD  IMPR -C    +CH3  +N    +H   
+ADD  IC -N    -CA   -C    -O    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +N    -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -C    +CH3  *+N   +H    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -CA   -C    +N    +CH3  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -C    +N    +CH3  +HH31 0.0000 0.0000 60.0000 0.0000 0.0000
+ADD  IC -C    +N    +CH3  +HH32 0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -C    +N    +CH3  +HH33 0.0000 0.0000 -60.0000 0.0000 0.0000
+END
+
+PRES NMEG ! Peptide GLY-NME link
+ADD  BOND -C    +N   
+ADD  ANGL +N    -C    -CA  
+ADD  ANGL +N    -C    -O   
+ADD  ANGL -C    +N    +H   
+ADD  ANGL -C    +N    +CH3 
+ADD  DIHE +H    +N    -C    -CA  
+ADD  DIHE +CH3  +N    -C    -CA  
+ADD  DIHE +H    +N    -C    -O    MULT 2
+ADD  DIHE +CH3  +N    -C    -O   
+ADD  DIHE -N    -CA   -C    +N    MULT 4
+ADD  DIHE -HA2  -CA   -C    +N   
+ADD  DIHE -HA3  -CA   -C    +N   
+ADD  DIHE +HH31 +CH3  +N    -C   
+ADD  DIHE +HH32 +CH3  +N    -C   
+ADD  DIHE +HH33 +CH3  +N    -C   
+ADD  IMPR -CA   +N    -C    -O   
+ADD  IMPR -C    +CH3  +N    +H   
+ADD  IC -N    -CA   -C    -O    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC +N    -CA   *-C   -O    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -C    +CH3  *+N   +H    0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -CA   -C    +N    +CH3  0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -C    +N    +CH3  +HH31 0.0000 0.0000 60.0000 0.0000 0.0000
+ADD  IC -C    +N    +CH3  +HH32 0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -C    +N    +CH3  +HH33 0.0000 0.0000 -60.0000 0.0000 0.0000
+END
+
+PRES DISU ! Disulfide patch
+ADD  BOND -SG   +SG  
+ADD  ANGL +SG   -SG   -CB  
+ADD  ANGL -SG   +SG   +CB  
+ADD  DIHE +CB   +SG   -SG   -CB   MULT 2
+ADD  DIHE -CA   -CB   -SG   +SG  
+ADD  DIHE -HB2  -CB   -SG   +SG  
+ADD  DIHE -HB3  -CB   -SG   +SG  
+ADD  DIHE +CA   +CB   +SG   -SG  
+ADD  DIHE +HB2  +CB   +SG   -SG  
+ADD  DIHE +HB3  +CB   +SG   -SG  
+ADD  IC -CA   -CB   -SG   +SG   0.0000 0.0000 180.0000 0.0000 0.0000
+ADD  IC -CB   -SG   +SG   +CB   0.0000 0.0000 90.0000 0.0000 0.0000
+ADD  IC -SG   +SG   +CB   +CA   0.0000 0.0000 180.0000 0.0000 0.0000
+END
+
+PRES PSTN ! Special patch to be applied afterwards for a NTER_AA-AA link
+DELE DIHE  -N    -CA   -C    +N MULT 4
+ADD  DIHE  -N    -CA   -C    +N
+END
+
+!------
+! Ions
+!------
+
+RESI CIO ! Sodium ion
+GROUP
+ATOM Na+  TYPE=IP   CHARGE= 1.000000 END
+END
+
+RESI Cl- ! Chloride ion
+GROUP
+ATOM Cl-  TYPE=IM   CHARGE=-1.000000 END
+END
+
+RESI Cs+ ! Cesium ion
+GROUP
+ATOM Cs+  TYPE=Es   CHARGE= 1.000000 END
+END
+
+RESI IB ! Hydrated sodium ion
+GROUP
+ATOM IB   TYPE=IB   CHARGE= 1.000000 END
+END
+
+RESI K+ ! Potassium ion
+GROUP
+ATOM K+   TYPE=K    CHARGE= 1.000000 END
+END
+
+RESI Li+ ! Lithium ion
+GROUP
+ATOM Li+  TYPE=Li   CHARGE= 1.000000 END
+END
+
+RESI MG2 ! Magnesium ion
+GROUP
+ATOM MG   TYPE=MG   CHARGE= 2.000000 END
+END
+
+RESI Na+ ! Sodium ion
+GROUP
+ATOM Na+  TYPE=IP   CHARGE= 1.000000 END
+END
+
+RESI Rb+ ! Rubidium ion
+GROUP
+ATOM Rb+  TYPE=Rb   CHARGE= 1.000000 END
+END
+
+AUTOGEN ANGL=TRUE DIHE=FALSE END
+
+!----------
+! Solvents
+!----------
+
+!RESI DC4 ! Dang-Chang (JCP 106:8149, 1997) water (DC4)
+!GROUP
+!ATOM O    TYPE=OW   CHARGE=      0.0 END
+!ATOM H1   TYPE=HW   CHARGE= 0.519000 END
+!ATOM H2   TYPE=HW   CHARGE= 0.519000 END
+!ATOM EPW  TYPE=EP   CHARGE=-1.038000 END
+!BOND O    EPW 
+!BOND H1   O   
+!BOND H1   H2  
+!BOND H2   O   
+!END
+
+!RESI PL3 ! POL3 water
+!GROUP
+!ATOM O    TYPE=OW   CHARGE=-0.730000 END
+!ATOM H1   TYPE=HW   CHARGE= 0.365000 END
+!ATOM H2   TYPE=HW   CHARGE= 0.365000 END
+!BOND H1   O   
+!BOND H1   H2  
+!BOND H2   O   
+!END
+
+!RESI SPC ! SCP/E water
+!GROUP
+!ATOM O    TYPE=OW   CHARGE=-0.847600 END
+!ATOM H1   TYPE=HW   CHARGE= 0.423800 END
+!ATOM H2   TYPE=HW   CHARGE= 0.423800 END
+!BOND H1   O   
+!BOND H1   H2  
+!BOND H2   O   
+!END
+
+!RESI SPF ! SPC/Fw water, JCP 124:024503 (2006)
+!GROUP
+!ATOM O    TYPE=OW   CHARGE=-0.820000 END
+!ATOM H1   TYPE=HW   CHARGE= 0.410000 END
+!ATOM H2   TYPE=HW   CHARGE= 0.410000 END
+!BOND H1   O   
+!BOND H1   H2  
+!BOND H2   O   
+!END
+
+!RESI SPG ! qSPC/Fw water, JCP 125:184057 (2006)
+!GROUP
+!ATOM O    TYPE=OW   CHARGE=-0.840000 END
+!ATOM H1   TYPE=HW   CHARGE= 0.420000 END
+!ATOM H2   TYPE=HW   CHARGE= 0.420000 END
+!BOND H1   O   
+!BOND H1   H2  
+!BOND H2   O   
+!END
+
+!RESI T4E ! TIP4P-Ew water (Ewald modified TIP4P)
+!GROUP
+!ATOM O    TYPE=OW   CHARGE=      0.0 END
+!ATOM H1   TYPE=HW   CHARGE= 0.524220 END
+!ATOM H2   TYPE=HW   CHARGE= 0.524220 END
+!ATOM EPW  TYPE=EP   CHARGE=-1.048440 END
+!BOND O    EPW 
+!BOND H1   O   
+!BOND H1   H2  
+!BOND H2   O   
+!END
+
+RESI TP3 ! TIP3 water
+GROUP
+ATOM O    TYPE=OW   CHARGE=-0.834000 END
+ATOM H1   TYPE=HW   CHARGE= 0.417000 END
+ATOM H2   TYPE=HW   CHARGE= 0.417000 END
+BOND H1   O   
+BOND H1   H2  
+BOND H2   O   
+END
+
+!RESI TP4 ! TIP4P water
+!GROUP
+!ATOM O    TYPE=OW   CHARGE=      0.0 END
+!ATOM H1   TYPE=HW   CHARGE= 0.520000 END
+!ATOM H2   TYPE=HW   CHARGE= 0.520000 END
+!ATOM EPW  TYPE=EP   CHARGE=-1.040000 END
+!BOND O    EPW 
+!BOND H1   O   
+!BOND H1   H2  
+!BOND H2   O   
+!END
+
+!RESI TP5 ! TIP5P water
+!GROUP
+!ATOM O    TYPE=OW   CHARGE=      0.0 END
+!ATOM H1   TYPE=HW   CHARGE= 0.241000 END
+!ATOM H2   TYPE=HW   CHARGE= 0.241000 END
+!ATOM EP1  TYPE=EP   CHARGE=-0.241000 END
+!ATOM EP2  TYPE=EP   CHARGE=-0.241000 END
+!BOND O    EP1 
+!BOND O    EP2 
+!BOND H1   O   
+!BOND H1   H2  
+!BOND H2   O   
+!END
+
+!RESI TPF ! TIP3(F) water
+!GROUP
+!ATOM O    TYPE=OW   CHARGE=-0.830000 END
+!ATOM H1   TYPE=HW   CHARGE= 0.415000 END
+!ATOM H2   TYPE=HW   CHARGE= 0.415000 END
+!BOND H1   O   
+!BOND H1   H2  
+!BOND H2   O   
+!END
+
+SET ECHO=TRUE END

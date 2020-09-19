@@ -1,0 +1,73 @@
+remarks Construire un modele du Trp-cage
+remarks avec le champ de force AMBER parm99SB
+remarks et le modele de solvatation GB HCT
+remarks Thomas Gaillard, November 2010
+remarks
+
+! Lire le fichier de topologie
+topology @amber.rtf end
+
+! Lire le fichier de parametres
+parameters @amber.prm end
+
+! Lire la sequence et generer le segment
+segment
+  name="A"
+  chain
+    first NASN tail + * end            ! traitement du residu N-terminal
+    last CSER head - * end             ! traitement du residu C-terminal
+    link PPGG head - GLY tail + GLY end ! connection de deux glycines (GLY-GLY)
+    link PPGP head - GLY tail + PRO end ! connection d'une glycine avec une proline (GLY-PRO)
+    link PPG1 head - * tail + GLY end   ! connection d'un residu avec une glycine (AA-GLY)
+    link PPG2 head - GLY tail + * end   ! connection d'une glycine avec un residu (GLY-AA)
+    link PEPP head - * tail + PRO end   ! connection d'un residu avec une proline (AA-PRO)
+    link PEPT head - * tail + * end     ! connection generique de residus (AA-AA)
+    coor @folded.pdb
+  end
+end
+! traitement special du residu N-terminal apres connection
+patch PSTN refe="-"=(resid 1) refe="+"=(resid 2) end
+
+! Lire les coordonnees
+coor @folded.pdb
+
+! Montrer les atomes manquants
+REMARK missing atoms
+write coor sele=(not known) end
+
+! Construire les hydrogenes manquants
+hbuild sele=(hydrogen and not known) end
+
+! Montrer les atomes manquants
+REMARK missing atoms
+write coor sele=(not known) end
+
+! Parametres pour les interactions non-liees
+parameters
+nbonds
+gbhct bato weps=78.5 offset=0.09 lambda=1.0 ! modele de solvatation GB HCT
+end
+end
+
+! Activer tous les termes d'energie
+flags exclude * include bond angl dihe impr vdw elec gbse gbin end
+
+! Calculer l'energie
+ener end
+
+! Ecrire le fichier de structure (PSF)
+REMARK PSF
+write struct output=allh.psf end
+
+! Ecrire les coordonnees
+REMARK allh PDB
+write coor output=allh.pdb end
+
+! Minimiser l'energie
+minimize powell nstep=1000 nprint=100 end
+
+! Ecrire les coordonnees
+REMARK min PDB
+write coor output=min.pdb end
+
+stop

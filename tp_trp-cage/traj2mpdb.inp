@@ -1,0 +1,42 @@
+remarks Ecrit un fichier PDB multiple a partir d'une trajectoire de dynamique moleculaire
+remarks Thomas Gaillard, November 2010
+remarks
+
+! Lire le fichier de topologie
+topology @amber.rtf end
+
+! Lire le fichier de parametres
+parameters @amber.prm end
+
+! Lire le fichier de structure
+struct @allh.psf end
+
+! Initialise la lecture de trajectoire
+read traj ascii=true input=md.dcd begin=500 stop=10000 skip=500 end
+
+! Initialise l'index des coordonnees
+evaluate ($i = 1)
+
+! Boucle de lecture de la trajectoire
+while ($i le 20) loop traj
+
+  ! Ecrit les coordonnees courantes
+  if ($i > 1) then
+    open md.multi.pdb access=append end
+  end if
+  REMARK $i
+  write coor output=md.multi.pdb end
+
+  ! Condition de sortie prematuree de la boucle
+  if ($status = "COMPLETE") then exit traj end if
+
+  ! Incremente l'index des coordonnees
+  evaluate ($i = $i + 1)
+
+  ! Avance dans la trajectoire
+  read traj next end
+
+! Fin de la boucle de lecture de la trajectoire
+end loop traj
+
+stop

@@ -1,0 +1,59 @@
+remarks Dynamique moleculaire du Trp-cage a 300K
+remarks avec le champ de force AMBER parm99SB
+remarks et le modele de solvatation GB HCT
+remarks Thomas Gaillard, November 2010
+remarks
+
+! Afficher seulement les messages importants
+set message=off end
+
+! Lire le fichier de topologie
+topology @amber.rtf end
+
+! Lire le fichier de parametres
+parameters @amber.prm end
+
+! Lire le fichier de structure
+struct @allh.psf end
+
+! Lire les coordonnees
+coor @min.pdb
+
+! Parametres pour les interactions non-liees
+parameters
+nbonds
+gbhct bato weps=78.5 offset=0.09 lambda=1.0 ! modele de solvatation GB HCT
+end
+end
+
+! Activer tous les termes d'energie
+flags exclude * include bond angl dihe impr vdw elec gbse gbin end
+
+! Rigidifier les liaisons impliquant des hydrogenes
+shake refer=coor bonds (hydrogens) (all) end
+
+! Constante de couplage pour le controle de la temperature
+vector do (fbeta = 0.1) (all)
+
+! Dynamique moleculaire
+dynamics verlet
+  nstep=10000       ! 10000 pas de dynamique
+  timest=0.002      ! pas d'integration de 0.002 ps
+  iasvel=maxwell    ! methode d'assignement des vitesses initiales
+  first=300.0       ! temperature initiale
+  tcoupl=true       ! controle de la temperature avec l'algorithme de Berendsen
+  tbath=300.0       ! temperature visee
+  nprint=500        ! afficher l'energie tous les 500 pas
+  iprfrq=10000      ! afficher des statistiques tous les 10000 pas 
+  isvfrq=10000      ! ecrire le fichier restart tous les 10000 pas
+  save=md.rst       ! fichier restart
+  nsavc=500         ! ecrire la trajectoire tous les 500 pas
+  ascii=true        ! format de la trajectoire
+  trajectory=md.dcd ! fichier de trajectoire
+end
+
+! Ecrire les coordonnees
+REMARK MD PDB
+write coor output=md.pdb end
+
+stop
